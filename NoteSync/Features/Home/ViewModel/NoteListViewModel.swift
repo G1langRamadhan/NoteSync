@@ -11,44 +11,44 @@ import Combine
 
 class NoteListViewModel: ObservableObject {
     @Published var searchNote: String = ""
-    @Published var searchSuggestion: [String] = [
-        "SwiftUI",
-        "Meeting",
-        "Project",
-        "Ideas",
-        "Daily Journal",
-        "Workout",
-        "Travel"
-    ]
-    let dummyNotes: [NoteCard] = [
-        NoteCard(
-            title: "Morning Reflection",
-            noteDescription: "Write down three things you are grateful for today and what you want to accomplish.",
-            tag: ["Personal", "Reflection"]
-        ),
-        
-        NoteCard(
-            title: "SwiftUI Learning",
-            noteDescription: "Study about property wrappers, state management, and how data flows in SwiftUI.",
-            tag: ["Coding", "SwiftUI", "Learning"]
-        ),
-        
-        NoteCard(
-            title: "Weekend Plan",
-            noteDescription: "Plan activities for the weekend such as exercising, reading a book, and preparing for next week.",
-            tag: ["Lifestyle", "Planning"]
-        )
-    ]
+    @Published var isLoading: Bool = false
+    @Published var notes: [NoteModel] = []
     
-    var filterNoteWithSearch: [NoteCard] {
+    var filterNoteWithSearch: [NoteModel] {
         guard !searchNote.isEmpty else {
-            return dummyNotes
+            return notes
         }
-        
-        return dummyNotes.filter { note in
+        return notes.filter { note in
             note.title.lowercased().contains(searchNote.lowercased())
-            || note.noteDescription.lowercased().contains(searchNote.lowercased())
-            || note.tag.contains(where: { $0.lowercased().contains(searchNote.lowercased()) })
+            || note.body.lowercased().contains(searchNote.lowercased())
         }
+    }
+    
+    private var noteServiceProtocol: NoteServiceProtocol
+    private var userId: String
+    
+    init(userId: String, noteProtocol: FireStoreNoteService = FireStoreNoteService()) {
+        self.noteServiceProtocol = noteProtocol
+        self.userId = userId
+        observer()
+    }
+    
+    func deleteNote(noteId: NoteModel) async throws {
+        do {
+            try await noteServiceProtocol.deleteNote(id: noteId.id)
+        } catch {
+            
+        }
+    }
+
+    func observer() {
+        noteServiceProtocol.observer(userId: userId) { [weak self] notes in
+            print("Notes di observer\(notes)")
+            self?.notes = notes
+        }
+    }
+    
+    deinit {
+        noteServiceProtocol.removeListener()
     }
 }

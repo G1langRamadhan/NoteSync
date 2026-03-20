@@ -8,19 +8,53 @@
 import Foundation
 import Combine
 import SwiftUI
-import FirebaseAuth
-
 
 class AuthViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var fullName: String = ""
     @Published var passwordConfirmation: String = ""
-    @Published var currentUser: User?
-    let authService = AuthService()
+    
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    @Published var isAuthenticated = false
+    
+    @Published var currentUser: AuthDataResultModel?
+    private let authServiceProtocol: AuthServiceProtocol
+    
+    init(authService: AuthServiceProtocol = FirebaseAuthService()) {
+        self.authServiceProtocol = authService
+        observeAuthState()
+    }
+    
+    func observeAuthState() {
+        authServiceProtocol.observeAuthState { user in
+            self.currentUser = user
+            self.isAuthenticated = user != nil
+        }
+    }
+    
+    func logOut() throws {
+        do {
+            try authServiceProtocol.signOut()
+        } catch {
+            errorMessage = "Can't logOut"
+        }
+    }
     
     func createEmailAccount() async throws {
-        try await authService.createUserWithEmail(email: email, password: password)
+        isLoading = true
+        errorMessage = nil
+        do {
+            currentUser = try await authServiceProtocol.createUser(email: email, password: password)
+            isAuthenticated = true
+        } catch let error as AuthError { // Tangkap error hanya jika tipe error tersebut adalah AuthError
+            errorMessage = error.errorDescription
+        } catch {
+            errorMessage = "Theres Somthing wrong, Try Again"
+        }
+        
+        isLoading = false
         email = ""
         password = ""
         fullName = ""
@@ -28,26 +62,61 @@ class AuthViewModel: ObservableObject {
     }
     
     func loginEmailAccount() async throws {
-        try await authService.loginWithEmail(email: email, password: password)
+        isLoading = true
+        errorMessage = nil
+        do {
+            currentUser = try await authServiceProtocol.signInWithEmail(email: email, password: password)
+            isAuthenticated = true
+        } catch let error as AuthError {
+            errorMessage = error.errorDescription
+        } catch {
+            errorMessage = "Theres Somthing wrong, Try Again"
+        }
+        
+        isLoading = false
         email = ""
         password = ""
     }
     
     func signInWithGoogle() async throws {
-        let googleDataResult = try await GoogleSignInHelper().getGooglDataResult()
-        try await authService.loginWithGoogle(googleToken: googleDataResult)
+        isLoading = true
+        errorMessage = nil
+        do {
+            let googleDataResult = try await GoogleSignInHelper().getGooglDataResult()
+            currentUser = try await authServiceProtocol.signInWithGoogle(googleToken: googleDataResult)
+            isAuthenticated = true
+        } catch let error as AuthError {
+            errorMessage = error.errorDescription
+        } catch {
+            errorMessage = "Theres Somthing wrong, Try Again"
+        }
+        
+        isLoading = false
     }
     
     func sigInWithApple() async throws {
-        let appleDataResult = try await AppleSigInHelper().signInWithApple()
-        try await authService.loginWithApple(appleDataResult: appleDataResult)
+        isLoading = true
+        errorMessage = nil
+        do {
+            let appleDataResult = try await AppleSigInHelper().signInWithApple()
+            currentUser =  try await authServiceProtocol.signInWithApple(appleDataResult: appleDataResult)
+            isAuthenticated = true
+        } catch let error as AuthError {
+            errorMessage = error.errorDescription
+        } catch {
+            errorMessage = "Theres Somthing wrong, Try Again"
+        }
+        
+        isLoading = false
     }
     
-    func getLoginUser() {
+    func signOut() {
         do {
-            currentUser = try authService.getCurrentUser()
+            try authServiceProtocol.signOut()
+            currentUser = nil
+            isAuthenticated = false
         } catch {
-            print(error)
+            errorMessage = "Gagal keluar. Coba lagi."
         }
     }
     

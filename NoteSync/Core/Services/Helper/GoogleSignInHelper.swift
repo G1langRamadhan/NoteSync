@@ -26,12 +26,12 @@ extension UIApplication {
 struct GoogleSignInHelper {
     func getGooglDataResult() async throws-> googleDataResult {
         guard let rootVC = UIApplication.shared.rootViewController else {
-            throw URLError(.badServerResponse)
+            throw AuthError.googleSignInFailed
         }
         
         let signInResult = try await GIDSignIn.sharedInstance.signIn(withPresenting: rootVC)
         guard let tokenId = signInResult.user.idToken?.tokenString else {
-            throw URLError(.badServerResponse)
+            throw AuthError.googleSignInFailed
         }
         
         let accessToken = signInResult.user.accessToken.tokenString

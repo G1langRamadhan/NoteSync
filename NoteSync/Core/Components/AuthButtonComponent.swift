@@ -7,17 +7,18 @@
 
 import SwiftUI
 
-struct ButtonAuthComponent: View {
+struct AuthButtonComponent: View {
     var title: String
-    var onAction: () -> Void = { }
+    var onAction: () async throws -> Void = { }
     var body: some View {
         Button {
-            onAction()
+            Task {
+                try? await onAction()
+            }
         } label: {
             Text(title)
                 .fontWeight(.bold)
-                .foregroundStyle(Color.nsTextPrimary)
-//                .padding(.vertical)
+                .foregroundStyle(Color.black)
                 .frame(height: 55)
                 .frame(maxWidth: .infinity)
                 .background (
@@ -51,5 +52,5 @@ struct SaveNote: View {
 
 #Preview {
     SaveNote(title: "Save Note")
-    ButtonAuthComponent(title: "Login")
+    AuthButtonComponent(title: "Login")
 }

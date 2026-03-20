@@ -17,12 +17,14 @@ enum Field: String, CaseIterable {
 }
 
 struct AuthDataResultModel {
+    var id: String
     var email: String?
     var name: String?
     var photoURL: String?
     var phoneNumber: String?
     
     init(user: User) {
+        self.id = user.uid
         self.email = user.email
         self.name = user.displayName ?? "User"
         self.photoURL = user.photoURL?.absoluteString

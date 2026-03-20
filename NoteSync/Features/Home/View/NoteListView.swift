@@ -8,42 +8,63 @@
 import SwiftUI
 
 struct NoteListView: View {
-    @StateObject var noteListVM = NoteListViewModel()
-   
+    @StateObject var noteListVM: NoteListViewModel
+    @EnvironmentObject var router: Router
+    @EnvironmentObject var authVieModel: AuthViewModel
+    init(userId: String) {
+        _noteListVM = StateObject(wrappedValue: NoteListViewModel(userId: userId))
+    }
     var body: some View {
-        NavigationStack {
-            VStack {
-                HStack {
-                    Text("Welcome \nBudi")
-                        .font(.largeTitle)
-                        .bold()
-                    
-                    Spacer()
-                    
-                    ZStack {
-                        Circle()
-                            .frame(width: 52)
-                            .foregroundStyle(Color.nsAccentPrimary)
-                        
-                        Text("B".capitalized)
-                            .foregroundStyle(Color.nsTextPrimary)
-                            .font(.title).bold()
+        if noteListVM.notes.count >= 1 {
+            List {
+                ForEach(noteListVM.filterNoteWithSearch) { note in
+                    CardNoteListView(
+                        title: note.title,
+                        noteDescription: note.body,
+                        tag: ["Swift", "Firebase", "Firestore"],
+                        searchText: noteListVM.searchNote
+                    )
+                    .onTapGesture {
+                        router.navigate(to: .noteEditorView(noteModel: note, userId: authVieModel.currentUser?.id ?? ""))
+                    }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        Button(role: .destructive) {
+                            Task {
+                                try await noteListVM.deleteNote(noteId: note)
+                            }
+                        } label: {
+                            Label("Hapus", systemImage: "trash")
+                        }
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                
-                ScrollView {
-                    ForEach(noteListVM.filterNoteWithSearch) { note in
-                        CardNoteListView (
-                            title: note.title,
-                            noteDescription: note.noteDescription,
-                            tag: note.tag,
-                            searchText: noteListVM.searchNote
-                        )
+            }
+            .navigationTitle("Welcome Budi")
+            .searchable(text: $noteListVM.searchNote)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(
+                Color.nsBackground
+            )
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        router.navigate(to: .noteEditorView(noteModel: NoteModel(title: "", body: ""), userId: authVieModel.currentUser?.id ?? ""))
+                    } label: {
+                        Image(systemName: "plus")
                     }
                 }
-                .searchable(text: $noteListVM.searchNote)
+            }
+        } else {
+            VStack(spacing: 20) {
+                Text("Belum Ada catatan")
+                    .font(.title)
+                    .fontDesign(.rounded)
                 
+                Text("Klik tombol + di bawah \n untuk mulai menulis".capitalized)
+                
+                AuthButtonComponent(title: "Catatan Baru") {
+                    router.navigate(to: .noteEditorView(noteModel: NoteModel(title: "", body: ""), userId: authVieModel.currentUser?.id ?? ""))
+                }
             }
             .padding(.horizontal)
         }
@@ -52,6 +73,8 @@ struct NoteListView: View {
 
 #Preview {
     NavigationStack {
-        NoteListView()
+        NoteListView(userId: "")
+            .environmentObject(Router())
+            .environmentObject(AuthViewModel())
     }
 }

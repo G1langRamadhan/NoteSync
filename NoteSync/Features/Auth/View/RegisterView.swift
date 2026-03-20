@@ -9,7 +9,7 @@ import SwiftUI
 import FirebaseAuth
 
 struct RegisterView: View {
-    @StateObject private var authViewModel = AuthViewModel()
+    @EnvironmentObject private var authViewModel: AuthViewModel
     @FocusState private var focusedField: Field?
     @Binding var showLoginView: Bool
     var contentType: UITextContentType? {
@@ -30,9 +30,11 @@ struct RegisterView: View {
         VStack(spacing: 32) {
             ForEach(Field.allCases, id:\.self) { field in
                 TextField(field.rawValue, text: authViewModel.textBinding(field: field))
-                    .foregroundStyle(Color.nsTextSecondary)
+                    .foregroundStyle(Color.nsTextPrimary)
                     .textContentType(contentType)
-                    .padding(25)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never) 
+                    .padding(20)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(Color.border)
@@ -41,7 +43,7 @@ struct RegisterView: View {
                     .focused($focusedField, equals: field)
             }
             
-            ButtonAuthComponent(title: "Create Account") {
+            AuthButtonComponent(title: "Create Account") {
                 Task {
                     do {
                         try await authViewModel.createEmailAccount()
@@ -65,9 +67,6 @@ struct RegisterView: View {
             
             Spacer()
         }
-        .onAppear {
-            authViewModel.getLoginUser()
-        }
         .padding(.top, 32)
         .padding(.horizontal)
         .navigationTitle("Daftar Akun")
@@ -77,5 +76,6 @@ struct RegisterView: View {
 #Preview {
     NavigationStack {
         RegisterView(showLoginView: .constant(true))
+            .environmentObject(AuthViewModel())
     }
 }

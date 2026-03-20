@@ -15,6 +15,7 @@ struct CardNoteListView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(highlightedText(title: title, searchText: searchText))
+                .foregroundStyle(Color.nsTextPrimary)
                 .font(.title)
                 .bold()
             
@@ -28,26 +29,23 @@ struct CardNoteListView: View {
                 ForEach(tag, id: \.self) { tag in
                     Text(tag)
                         .foregroundStyle(Color.nsTextPrimary)
-                        .padding(10)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 3)
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.nsAccentSecondary)
+                                .fill(Color.blue)
                         )
                 }
             }
+            .padding(.top, 10)
         }
-        .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.nsCardSurface)
-        )
     }
     
     func highlightedText(title: String, searchText: String) -> AttributedString {
         var atributedString = AttributedString(title)
         
-        guard searchText.count > 3 else {
+        guard searchText.count >= 2 else {
             return atributedString
         }
 
