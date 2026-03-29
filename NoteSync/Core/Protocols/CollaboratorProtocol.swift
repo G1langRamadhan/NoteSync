@@ -8,10 +8,10 @@
 import Foundation
 
 protocol CollaboratorProtocol {
-    func fetchCollaborators(noteId: String) async throws -> [CollaboratorModel]
-    func updateCollaborators(collaborator: CollaboratorModel) async throws
-    func deleteCollaborators(collaboratorId: String) async throws
+    func fetchCollaborators(userId: String, noteId: String) async throws -> [CollaboratorModel]
+    func updateCollaborators(userId: String, noteId: String, collaborator: CollaboratorModel) async throws
+    func deleteCollaborators(userId: String, noteId: String, collaboratorId: String) async throws
     
-    func observeCollaborators(userId: String, onChange: @escaping ([CollaboratorModel]) -> Void)
+    func observeCollaborators(userId: String, noteId: String, onChange: @escaping ([CollaboratorModel]) -> Void)
     func removeListener()
 }

@@ -49,7 +49,6 @@ struct ProfileRow: View {
             Text(profileTabType.title)
                 .foregroundStyle(Color.nsTextPrimary)
             
-            
             Spacer()
             
             if let value {

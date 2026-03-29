@@ -8,20 +8,19 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject var authViewModel = AuthViewModel()
+    var isAuthenticated: Bool
     var body: some View {
         Group {
-            if authViewModel.isAuthenticated {
+            if isAuthenticated {
                 ContainerTabView()
                     .preferredColorScheme(.dark)
             } else {
                 LoginView()
             }
         }
-        .environmentObject(authViewModel)
     }
 }
 
 #Preview {
-    MainView()
+    MainView(isAuthenticated: false)
 }

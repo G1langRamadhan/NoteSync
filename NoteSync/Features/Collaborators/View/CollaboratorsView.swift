@@ -8,12 +8,16 @@
 import SwiftUI
 
 struct CollaboratorsView: View {
-    var noteTitle: String = "SwiftUI Roadmap"
-    var totalCollaborators: Int = 0
+    @StateObject var collaboratorViewModel: CollaboratorsViewModel
     @State var email: String = ""
+    var noteTitle: String
+    
+    init(noteModel: NoteModel, userId: String, userDetail: AuthDataResultModel?) {
+        _collaboratorViewModel = StateObject(wrappedValue: CollaboratorsViewModel(userId: userId, note: noteModel, userInfo: userDetail))
+        noteTitle = noteModel.title
+    }
     @FocusState private var focusedField: Field?
     var body: some View {
-        NavigationStack {
             VStack(spacing: 50) {
                 VStack(alignment: .leading, spacing: 50) {
                     Text(noteTitle)
@@ -37,22 +41,59 @@ struct CollaboratorsView: View {
                                     .stroke(Color.nsAccentPrimary, lineWidth: focusedField == .email ? 2 : 0)
                             )
                             .focused($focusedField, equals: .email)
+                        
+                        Button {
+                            Task {
+                                do {
+                                    try await collaboratorViewModel.sentInvitation(to: email)
+                                }
+                            }
+                        } label: {
+                            Text("send invitation")
+                        }
+
                     }
                 }
                 
+                    Section {
+                        ForEach(collaboratorViewModel.invitations) { invitation in
+                            InvitationCardView(
+                                invitation: invitation,
+                                onAccept: {
+                                    await  collaboratorViewModel.acceptInvitation(invitation: invitation)
+                                },
+                                onDecline: {
+                                    await collaboratorViewModel.declineInvitation(invitation: invitation)
+                                }
+                            )
+                            .listRowInsets(EdgeInsets(
+                                top: 6, leading: 16,
+                                bottom: 6, trailing: 16
+                            ))
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                        }
+                    } header: {
+                        SectionHeaderView(
+                            title: "Undangan Masuk",
+                            count: collaboratorViewModel.invitations.count
+                        )
+                    }
+                
+                
                 VStack(alignment: .leading, spacing: 20) {
-                    Text("Anggota (\(totalCollaborators))")
+                    Text("Anggota (\(collaboratorViewModel.collaborators.count))")
                         .foregroundStyle(Color.nsTextSecondary)
                     
                     ScrollView {
                         VStack(spacing: 30) {
-                            ForEach(0..<4) { index in
-                                CollaboratorsCardView()
+                            ForEach(collaboratorViewModel.collaborators) { collaborator in
+                                CollaboratorsCardView(/*statusCollaborators: collaborator.status,*/ name: collaborator.name, photoUrl: collaborator.photoProfile, collaboratorRoles: collaborator.role)
                             }
                         }
                     }
                 }
-
+                
                 Spacer()
             }
             .padding(.horizontal)
@@ -62,12 +103,29 @@ struct CollaboratorsView: View {
             .background(
                 Color.nsBackground
             )
+
+    }
+}
+
+struct SectionHeaderView: View {
+    let title: String
+    let count: Int
+
+    var body: some View {
+        HStack {
+            Text(title)
+                .font(.system(size: 13))
+                .foregroundColor(.nsTextSecondary)
+            Spacer()
+            Text("\(count)")
+                .font(.system(size: 12))
+                .foregroundColor(.nsTextSecondary)
         }
     }
 }
 
-#Preview {
-    NavigationStack {
-        CollaboratorsView(noteTitle: "SwiftUI Roadmap")
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        CollaboratorsView(noteTitle: "SwiftUI Roadmap")
+//    }
+//}

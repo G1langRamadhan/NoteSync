@@ -11,6 +11,7 @@ import SwiftUI
 
 enum Route: Hashable {
     case noteEditorView(noteModel: NoteModel, userId: String)
+    case collaboratorView(noteModel: NoteModel, userId: String)
 }
 
 class Router: ObservableObject {

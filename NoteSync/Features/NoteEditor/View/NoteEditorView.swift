@@ -9,6 +9,7 @@ import SwiftUI
 
 struct NoteEditorView: View {
     @StateObject var noteEditorViewModel: NoteEditorViewModel
+    @EnvironmentObject var router: Router
     @FocusState var isTitleFocused
     @FocusState var isBodyFocused
     init(note: NoteModel, userId: String) {
@@ -66,11 +67,10 @@ struct NoteEditorView: View {
             .toolbar(content: {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        Task {
-                            try await noteEditorViewModel.saveNote()
-                        }
+                        router.navigate(to: .collaboratorView(noteModel: noteEditorViewModel.note, userId: noteEditorViewModel.userId))
                     } label: {
-                        Image(systemName: "square.and.arrow.down.on.square")
+                        Image(systemName: "person.3")
+                            .font(.system(size: 12))
                     }
                 }
             })

@@ -11,11 +11,13 @@ import FirebaseCore
 @main
 struct NoteSyncApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authViewModel = AuthViewModel()
     var body: some Scene {
         WindowGroup {
-            MainView()
+            MainView(isAuthenticated: authViewModel.isAuthenticated)
                 .preferredColorScheme(.dark)
         }
+        .environmentObject(authViewModel)
     }
 }
 

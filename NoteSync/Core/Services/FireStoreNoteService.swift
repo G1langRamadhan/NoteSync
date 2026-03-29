@@ -13,15 +13,18 @@ import FirebaseFirestore
 class FireStoreNoteService: NoteServiceProtocol {
     
     private var db = Firestore.firestore()
-    private var collection: CollectionReference {
-        db.collection("notes")
+    
+    private var userCollections: CollectionReference {
+        db.collection("users")
     }
+    
     private var listener: ListenerRegistration?
     
     
     func fetchNotes(userId: String) async throws -> [NoteModel] {
-        let snapShot = try await collection
-            .whereField(NoteDocument.CodingKeys.ownerId.rawValue, isEqualTo: userId)
+        let userNotesRef = userCollections.document(userId).collection("notes")
+        
+        let snapShot = try await userNotesRef
             .order(by: NoteDocument.CodingKeys.lastUpdateLocal.rawValue, descending: true)
             .getDocuments()
         
@@ -40,15 +43,18 @@ class FireStoreNoteService: NoteServiceProtocol {
             NoteDocument.CodingKeys.ownerId.rawValue : userId,
             NoteDocument.CodingKeys.dateCreated.rawValue : noteModel.dateCreated,
             NoteDocument.CodingKeys.lastUpdateLocal.rawValue : noteModel.lastUpdateLocal,
+            NoteDocument.CodingKeys.sharedWith.rawValue : [],
             "lastUpdateServer": FieldValue.serverTimestamp()
         ]
-
-        try await collection
+        
+        try await userCollections
+            .document(userId)
+            .collection("notes")
             .document(noteModel.id)
             .setData(data)
     }
     
-    func updateNote(_ noteModel: NoteModel) async throws {
+    func updateNote(_ noteModel: NoteModel, _ userId: String) async throws {
         let data: [String: Any] = [
             NoteDocument.CodingKeys.title.rawValue : noteModel.title,
             NoteDocument.CodingKeys.body.rawValue : noteModel.body,
@@ -57,19 +63,25 @@ class FireStoreNoteService: NoteServiceProtocol {
             "lastUpdateServer": FieldValue.serverTimestamp()
         ]
         
-        try await collection.document(noteModel.id).updateData(data)
+        try await userCollections.document(userId)
+            .collection("notes")
+            .document(noteModel.id)
+            .updateData(data)
     }
     
-    func deleteNote(id: String) async throws{
-        try await collection
-            .document(id)
-            .delete()
+    func deleteNote(noteId: String, userId: String) async throws{
+        try await userCollections
+            .document(userId)
+            .collection("notes")
+            .document(noteId).delete()
     }
     
     func observer(userId: String, onChange: @escaping ([NoteModel]) -> Void) {
         listener?.remove()
-        listener = collection
-            .whereField(NoteDocument.CodingKeys.ownerId.rawValue, isEqualTo: userId)
+        
+        let userNotesRef = userCollections.document(userId).collection("notes")
+        
+       listener = userNotesRef
             .order(by: NoteDocument.CodingKeys.lastUpdateLocal.rawValue, descending: true)
             .addSnapshotListener{ snapshot, error in
                 guard let snapshot else {
@@ -85,6 +97,29 @@ class FireStoreNoteService: NoteServiceProtocol {
                 }
                 onChange(notes)
             }
+    }
+    
+    func observeSharedNote(userId: String, onChange: @escaping ([NoteModel]) -> Void) {
+        let userNotesRef = db.collectionGroup("notes")
+            
+        print("userid observer shared notes: \(userId)")
+        listener = userNotesRef
+            .whereField("sharedWith", arrayContains: userId)
+            .addSnapshotListener({ snapshot, error in
+                guard let snapshot else {
+                    return
+                }
+                
+                let sharedNotes = snapshot.documents.compactMap { doc in
+                    guard let noteDoc = try? doc.data(as: NoteDocument.self) else {
+                        return nil as NoteModel?
+                    }
+                    
+                    return NoteModel(from: noteDoc)
+                }
+                
+                onChange(sharedNotes)
+            })
     }
     
     func removeListener() {

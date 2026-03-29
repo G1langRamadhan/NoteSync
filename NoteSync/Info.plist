@@ -15,5 +15,7 @@
 	</array>
 	<key>GIDClientID</key>
 	<string>328635331220-hmdb10phnvd1rvrac1mmbhtbpos41ghd.apps.googleusercontent.com</string>
+	<key>NSApplicationCrashOnExceptions</key>
+	<true/>
 </dict>
 </plist>

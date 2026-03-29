@@ -10,13 +10,15 @@ import Foundation
 protocol InvitationProtocol {
     func searchUser(by email: String) async throws -> UserSearchResult
     func sendInvitation(
-        to email: String,
-        noteId: String,
-        noteTitle: String,
-        role: Role
+        ownerId: String, to email: String, _ InvitationModel: InvitationModel
     ) async throws
     
     func fetchInvitation(userId: String) async throws -> [InvitationModel]
-    func acceptInvitation(invitationId: String, noteId: String) async throws
-    func declineInvitation(invitationId: String) async throws
+    func acceptInvitation(
+        invitationId: String,
+        userDetail: AuthDataResultModel?
+    ) async throws
+    func declineInvitation(ownerId: String, invitationId: String, noteId: String) async throws
+    func observerInvitation(userId: String, onChange: @escaping ([InvitationModel]) -> Void)
+    func removeListener()
 }

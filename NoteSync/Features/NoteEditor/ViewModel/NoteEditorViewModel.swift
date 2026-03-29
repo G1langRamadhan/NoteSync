@@ -22,7 +22,7 @@ class NoteEditorViewModel: ObservableObject {
     @Published var syncStatus: SyncState = .synced
     @Published var errorMessage: String?
     
-    private var userId: String
+    var userId: String
     private var isNewNote: Bool
     private var cancellables = Set<AnyCancellable>()
     
@@ -75,7 +75,7 @@ class NoteEditorViewModel: ObservableObject {
             if isNewNote {
                 try await noteServiceProtocol.createNote(note, userId)
             } else {
-                try await noteServiceProtocol.updateNote(note)
+                try await noteServiceProtocol.updateNote(note, userId)
             }
             syncStatus = .synced
         } catch {

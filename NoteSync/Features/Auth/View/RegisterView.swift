@@ -47,6 +47,7 @@ struct RegisterView: View {
                 Task {
                     do {
                         try await authViewModel.createEmailAccount()
+                        showLoginView = false
                     } catch {
                         print(error)
                     }
