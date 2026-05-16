@@ -30,4 +30,13 @@ struct AuthDataResultModel {
         self.photoURL = user.photoURL?.absoluteString
         self.phoneNumber = user.phoneNumber
     }
+    
+    init(id: String, email: String? = nil, name: String? = nil,
+         photoURL: String? = nil, phoneNumber: String? = nil) {
+        self.id = id
+        self.email = email
+        self.name = name
+        self.photoURL = photoURL
+        self.phoneNumber = phoneNumber
+    }
 }

@@ -13,6 +13,7 @@ class NoteListViewModel: ObservableObject {
     @Published var searchNote: String = ""
     @Published var isLoading: Bool = false
     @Published var notes: [NoteModel] = []
+    @Published var errorMessage: String?
     
     private var myNotes: [NoteModel] = []
     private var sharedNotes: [NoteModel] = []
@@ -28,9 +29,9 @@ class NoteListViewModel: ObservableObject {
     }
 
     private var noteServiceProtocol: NoteServiceProtocol
-    private var userId: String
+    /*private*/ var userId: String
     
-    init(userId: String, noteProtocol: FireStoreNoteService = FireStoreNoteService()) {
+    init(userId: String, noteProtocol: NoteServiceProtocol = FireStoreNoteService()) {
         self.noteServiceProtocol = noteProtocol
         self.userId = userId
         observer()
@@ -40,13 +41,12 @@ class NoteListViewModel: ObservableObject {
         do {
             try await noteServiceProtocol.deleteNote(noteId: noteId.id, userId: userId)
         } catch {
-            
+            errorMessage = error.localizedDescription
         }
     }
 
     func observer() {
         noteServiceProtocol.observer(userId: userId) { [weak self] notes in
-            print("Notes di observer\(notes)")
             self?.myNotes = notes
             self?.combineAndSortNotes()
         }

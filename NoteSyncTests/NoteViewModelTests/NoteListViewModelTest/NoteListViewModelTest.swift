@@ -9,7 +9,7 @@ import XCTest
 @testable import NoteSync
 
 @MainActor
-class NoteViewModelTest: XCTestCase {
+class NoteListViewModelTest: XCTestCase {
     var sut: NoteListViewModel!
     var mockNoteListViewModelTest: MockNoteServiceProtocol!
     

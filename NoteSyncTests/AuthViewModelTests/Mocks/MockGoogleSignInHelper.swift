@@ -6,3 +6,18 @@
 //
 
 import Foundation
+@testable import NoteSync
+
+class MockGoogleSignInHelper: GoogleSignInHelperProtocol {
+    
+    var shouldThrowError = false
+    
+    func getGooglDataResult() async throws -> googleDataResult {
+        try await Task.sleep(nanoseconds: 100_000_000)
+        if shouldThrowError {
+            throw AuthError.googleSignInFailed
+        }
+        
+        return googleDataResult(tokenId: "mock-token-123578", accessToken: "mock-access-token-1234")
+    }
+}

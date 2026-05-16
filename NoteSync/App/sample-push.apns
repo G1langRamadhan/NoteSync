@@ -1,0 +1,11 @@
+{
+    "Simulator Target Bundle": "com.example.NoteSync",
+    "aps" : {
+        "alert" : {
+            "title" : "Game Request",
+            "subtitle" : "Five Card Draw",
+            "body" : "Bob wants to play poker"
+        }
+    }
+}
+

@@ -5,4 +5,57 @@
 //  Created by Gilang Ramadhan on 15/05/26.
 //
 
-import Foundation
+import XCTest
+@testable import NoteSync
+
+extension AuthViewModelTest {
+    func test_authViewModel_whenSignInWithGoogle_sigInWithApple_shouldReturnUserData() async throws {
+        // given
+        let user = AuthDataResultModel(
+            id: "testingId123",
+            email: "testLogin@gmail.com",
+            name: "John Doe",
+            photoURL: nil,
+            phoneNumber: nil
+        )
+        
+        mockService.mockUser = user
+        
+        let sut = AuthViewModel(
+            authService: mockService,
+            appleSignInHelper: MockAppleSignInHelper()
+        )
+        
+        //when
+        try await sut.sigInWithApple()
+        
+        //then
+        XCTAssertEqual(sut.currentUser?.email, "testLogin@gmail.com")
+        XCTAssertNil(sut.currentUser?.phoneNumber)
+        XCTAssertEqual(sut.authState, .authenticated)
+        XCTAssertNil(sut.errorMessage)
+        XCTAssertNotNil(sut.currentUser)
+    }
+    
+    // buat test error ketika login with apple
+    func test_authViewModel_whenHelperFails_signInWithApple_shouldReturnError() async throws {
+        //given
+        let appleSignInHelper = MockAppleSignInHelper()
+        appleSignInHelper.shouldThrowError = true
+        
+        let sut = AuthViewModel(
+            authService: mockService,
+            appleSignInHelper: appleSignInHelper
+        )
+        
+        // when
+        try await sut.sigInWithApple()
+        
+        // then
+        XCTAssertEqual(appleSignInHelper.helperCallCount, 1, "Helper call count should be 1")
+        XCTAssertEqual(appleSignInHelper.helperCallCount, 1, accuracy: 0) // accuracy ini lebih ke selesih nya itu masih masuk range atau tidak dari pengurangan exp 1 dan 2
+        XCTAssertEqual(sut.errorMessage, "Apple Sign-In gagal")
+        XCTAssertNil(sut.currentUser)
+        XCTAssertEqual(sut.authState, .unauthenticated)
+    }
+}

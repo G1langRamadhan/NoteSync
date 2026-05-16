@@ -14,7 +14,7 @@ struct ProfileView: View {
         _noteListVM = StateObject(wrappedValue: NoteListViewModel(userId: userId))
     }
     var body: some View {
-        VStack(spacing: 50) {
+        VStack(spacing: 20) {
             VStack(spacing: 20) {
                 Button {
                     print("Change photo profile")
@@ -23,15 +23,24 @@ struct ProfileView: View {
                 }
                 .buttonStyle(.plain)
                 
-                Text(authViewModel.currentUser?.name ?? "")
-                    .font(.title)
-                    .fontWeight(.bold)
-                    .foregroundStyle(.white)
+                VStack(spacing: 5) {
+                    Text(authViewModel.currentUser?.name ?? "")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundStyle(.white)
+                    
+                    Text(authViewModel.currentUser?.email ?? "")
+                        .foregroundStyle(Color.nsTextSecondary)
+                }
                 
-                Text(authViewModel.currentUser?.email ?? "")
-                    .foregroundStyle(Color.nsTextSecondary)
+                HStack {
+                    noteCard(value: noteListVM.filterNoteWithSearch.count, title: "Notes Created")
+                    
+                    Spacer()
+                    
+                    noteCard(value: noteListVM.filterNoteWithSearch.count, title: "Notes Shared")
+                }
             }
-            .padding(.top, 30)
             
             VStack(spacing: 20) {
                 ForEach(ProfileTabType.allCases) {type in
@@ -39,12 +48,27 @@ struct ProfileView: View {
                 }
                 
                 Button {
-                    try? authViewModel.logOut()
+
                 } label: {
                     HStack {
+                        Image(systemName: "bell.badge")
+                        Text("Notifications Center")
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                    }
+                }
+                
+                Divider()
+                
+                Button {
+                    try? authViewModel.signOut()
+                } label: {
+                    HStack {
+                        Image(systemName: "door.right.hand.open")
                         Text("Keluar")
                             .foregroundStyle(Color.nsError)
-                        
                         
                         Spacer()
                         
@@ -54,6 +78,11 @@ struct ProfileView: View {
             }
             .font(.title3)
             .foregroundStyle(Color.white)
+            .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.nsCardSurface)
+            )
             
             Spacer()
         }
@@ -69,6 +98,23 @@ struct ProfileView: View {
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.nsBackground)
+    }
+    
+    func noteCard(value: Int, title: String) -> some View {
+        VStack(spacing: 10) {
+            Text("\(value)")
+                .foregroundStyle(Color.orange)
+            
+            Text(title)
+                .foregroundStyle(Color.text)
+        }
+        .padding()
+        .font(.headline)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.border)
+        )
+        .padding()
     }
 }
 

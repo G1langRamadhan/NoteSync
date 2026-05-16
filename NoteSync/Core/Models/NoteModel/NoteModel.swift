@@ -15,6 +15,7 @@ struct NoteModel: Identifiable, Hashable {
     var lastUpdateLocal: Date
     var dateCreated: Date
     var sharedWith: [String]
+    var ownerId: String = ""
     
     init(title: String, body: String) {
         self.id = UUID().uuidString
@@ -32,5 +33,6 @@ struct NoteModel: Identifiable, Hashable {
         self.dateCreated = document.dateCreated.dateValue()
         self.lastUpdateLocal = document.lastUpdateLocal.dateValue()
         self.sharedWith = document.sharedWith
+        self.ownerId = document.ownerId
     }
 }

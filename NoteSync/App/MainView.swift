@@ -8,19 +8,18 @@
 import SwiftUI
 
 struct MainView: View {
-    var isAuthenticated: Bool
+    var authState: AuthState
     var body: some View {
         Group {
-            if isAuthenticated {
+            switch authState {
+            case .loading:
+                ProgressView()
+            case .authenticated:
                 ContainerTabView()
                     .preferredColorScheme(.dark)
-            } else {
+            case .unauthenticated:
                 LoginView()
             }
         }
     }
-}
-
-#Preview {
-    MainView(isAuthenticated: false)
 }

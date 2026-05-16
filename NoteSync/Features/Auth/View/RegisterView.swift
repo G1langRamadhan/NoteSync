@@ -60,7 +60,7 @@ struct RegisterView: View {
                 Button("Singin Here"){
                     showLoginView = false
                 }
-                .foregroundColor(Color.nsAccentPrimary)
+                .foregroundColor(Color.orangePrimary)
                 .underline()
                 .buttonStyle(.plain)
             }

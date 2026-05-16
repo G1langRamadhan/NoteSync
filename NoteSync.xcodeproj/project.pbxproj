@@ -7,15 +7,29 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A60523AD2FADB7DC008C7E43 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = A60523AC2FADB7DC008C7E43 /* FirebaseMessaging */; };
+		A60523AF2FADB7E3008C7E43 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = A60523AE2FADB7E3008C7E43 /* FirebaseStorage */; };
 		A62109C72F6A8F14009400FF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = A62109C62F6A8F14009400FF /* FirebaseFirestore */; };
 		A64B95AB2F711ECF00D14DCC /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = A64B95AA2F711ECF00D14DCC /* FirebaseCrashlytics */; };
+		A65130272FB1AD9500B31F3D /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = A65130262FB1AD9500B31F3D /* FirebaseCore */; };
 		A6B48B302F62A1430039E68E /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = A6B48B2F2F62A1430039E68E /* FirebaseAnalytics */; };
 		A6B48B322F62A1430039E68E /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = A6B48B312F62A1430039E68E /* FirebaseAuth */; };
 		A6B48B372F62A3920039E68E /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = A6B48B362F62A3920039E68E /* GoogleSignIn */; };
 		A6B48B392F62A3920039E68E /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A6B48B382F62A3920039E68E /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A60A99322FB5F4D80086DAB6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6569E202F614E1C00F2EB06 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A6569E272F614E1C00F2EB06;
+			remoteInfo = NoteSync;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		A60A992E2FB5F4D70086DAB6 /* NoteSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoteSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6569E282F614E1C00F2EB06 /* NoteSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -30,6 +44,11 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		A60A992F2FB5F4D80086DAB6 /* NoteSyncTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NoteSyncTests;
+			sourceTree = "<group>";
+		};
 		A6569E2A2F614E1C00F2EB06 /* NoteSync */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -41,15 +60,25 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		A60A992B2FB5F4D70086DAB6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A6569E252F614E1C00F2EB06 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				A6B48B302F62A1430039E68E /* FirebaseAnalytics in Frameworks */,
 				A6B48B322F62A1430039E68E /* FirebaseAuth in Frameworks */,
+				A60523AD2FADB7DC008C7E43 /* FirebaseMessaging in Frameworks */,
 				A6B48B372F62A3920039E68E /* GoogleSignIn in Frameworks */,
 				A64B95AB2F711ECF00D14DCC /* FirebaseCrashlytics in Frameworks */,
+				A60523AF2FADB7E3008C7E43 /* FirebaseStorage in Frameworks */,
 				A62109C72F6A8F14009400FF /* FirebaseFirestore in Frameworks */,
+				A65130272FB1AD9500B31F3D /* FirebaseCore in Frameworks */,
 				A6B48B392F62A3920039E68E /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -68,6 +97,7 @@
 			isa = PBXGroup;
 			children = (
 				A6569E2A2F614E1C00F2EB06 /* NoteSync */,
+				A60A992F2FB5F4D80086DAB6 /* NoteSyncTests */,
 				A62109C52F6A8F14009400FF /* Frameworks */,
 				A6569E292F614E1C00F2EB06 /* Products */,
 			);
@@ -77,6 +107,7 @@
 			isa = PBXGroup;
 			children = (
 				A6569E282F614E1C00F2EB06 /* NoteSync.app */,
+				A60A992E2FB5F4D70086DAB6 /* NoteSyncTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -84,6 +115,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		A60A992D2FB5F4D70086DAB6 /* NoteSyncTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A60A99362FB5F4D80086DAB6 /* Build configuration list for PBXNativeTarget "NoteSyncTests" */;
+			buildPhases = (
+				A60A992A2FB5F4D70086DAB6 /* Sources */,
+				A60A992B2FB5F4D70086DAB6 /* Frameworks */,
+				A60A992C2FB5F4D70086DAB6 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A60A99332FB5F4D80086DAB6 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A60A992F2FB5F4D80086DAB6 /* NoteSyncTests */,
+			);
+			name = NoteSyncTests;
+			packageProductDependencies = (
+			);
+			productName = NoteSyncTests;
+			productReference = A60A992E2FB5F4D70086DAB6 /* NoteSyncTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		A6569E272F614E1C00F2EB06 /* NoteSync */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A6569E332F614E1E00F2EB06 /* Build configuration list for PBXNativeTarget "NoteSync" */;
@@ -108,6 +162,9 @@
 				A6B48B382F62A3920039E68E /* GoogleSignInSwift */,
 				A62109C62F6A8F14009400FF /* FirebaseFirestore */,
 				A64B95AA2F711ECF00D14DCC /* FirebaseCrashlytics */,
+				A60523AC2FADB7DC008C7E43 /* FirebaseMessaging */,
+				A60523AE2FADB7E3008C7E43 /* FirebaseStorage */,
+				A65130262FB1AD9500B31F3D /* FirebaseCore */,
 			);
 			productName = NoteSync;
 			productReference = A6569E282F614E1C00F2EB06 /* NoteSync.app */;
@@ -123,6 +180,10 @@
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
+					A60A992D2FB5F4D70086DAB6 = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = A6569E272F614E1C00F2EB06;
+					};
 					A6569E272F614E1C00F2EB06 = {
 						CreatedOnToolsVersion = 26.0.1;
 					};
@@ -147,11 +208,19 @@
 			projectRoot = "";
 			targets = (
 				A6569E272F614E1C00F2EB06 /* NoteSync */,
+				A60A992D2FB5F4D70086DAB6 /* NoteSyncTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		A60A992C2FB5F4D70086DAB6 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A6569E262F614E1C00F2EB06 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -189,6 +258,13 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		A60A992A2FB5F4D70086DAB6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A6569E242F614E1C00F2EB06 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -198,7 +274,58 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A60A99332FB5F4D80086DAB6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A6569E272F614E1C00F2EB06 /* NoteSync */;
+			targetProxy = A60A99322FB5F4D80086DAB6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A60A99342FB5F4D80086DAB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 4KM5ZDJ52X;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.NoteSyncTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoteSync.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NoteSync";
+			};
+			name = Debug;
+		};
+		A60A99352FB5F4D80086DAB6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4KM5ZDJ52X;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.NoteSyncTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoteSync.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NoteSync";
+			};
+			name = Release;
+		};
 		A6569E312F614E1E00F2EB06 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -329,6 +456,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NoteSync/NoteSync.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4KM5ZDJ52X;
@@ -362,6 +490,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = NoteSync/NoteSync.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 4KM5ZDJ52X;
@@ -393,6 +522,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A60A99362FB5F4D80086DAB6 /* Build configuration list for PBXNativeTarget "NoteSyncTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A60A99342FB5F4D80086DAB6 /* Debug */,
+				A60A99352FB5F4D80086DAB6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A6569E232F614E1C00F2EB06 /* Build configuration list for PBXProject "NoteSync" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -433,6 +571,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A60523AC2FADB7DC008C7E43 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A6B48B2E2F62A1430039E68E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		A60523AE2FADB7E3008C7E43 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A6B48B2E2F62A1430039E68E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
 		A62109C62F6A8F14009400FF /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A6B48B2E2F62A1430039E68E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
@@ -442,6 +590,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = A6B48B2E2F62A1430039E68E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseCrashlytics;
+		};
+		A65130262FB1AD9500B31F3D /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A6B48B2E2F62A1430039E68E /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
 		};
 		A6B48B2F2F62A1430039E68E /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

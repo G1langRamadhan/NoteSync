@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import FirebaseCore
 
 @main
 struct NoteSyncApp: App {
@@ -14,17 +13,9 @@ struct NoteSyncApp: App {
     @StateObject var authViewModel = AuthViewModel()
     var body: some Scene {
         WindowGroup {
-            MainView(isAuthenticated: authViewModel.isAuthenticated)
+            MainView(authState: authViewModel.authState)
                 .preferredColorScheme(.dark)
+                .environmentObject(authViewModel)
         }
-        .environmentObject(authViewModel)
     }
-}
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-    return true
-  }
 }

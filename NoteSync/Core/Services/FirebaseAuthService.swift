@@ -45,6 +45,7 @@ class FirebaseAuthService: AuthServiceProtocol {
             "photoUrl" : user.photoURL ?? "",
             "dateCreated" : user.dateCreated
         ]
+        print("data yang akan dikirim ke firebase, \(data)")
         try await userCollection.document(user.id).setData(data)
     }
     
@@ -67,7 +68,7 @@ class FirebaseAuthService: AuthServiceProtocol {
         } catch let error as NSError {
             throw mapFirebaseError(error)
         }
-       
+        
     }
     
     func signInWithGoogle(googleToken: googleDataResult) async throws -> AuthDataResultModel {
@@ -77,20 +78,15 @@ class FirebaseAuthService: AuthServiceProtocol {
         } catch let error as NSError {
             throw mapFirebaseError(error)
         }
-        
     }
     
     func signInWithApple(appleDataResult: AppleDataResult) async throws -> AuthDataResultModel {
-        do {
-            let authDataResult =  OAuthProvider.appleCredential(
-                withIDToken: appleDataResult.tokenId,
-                rawNonce: appleDataResult.rawNonce,
-                fullName: appleDataResult.fullName
-            )
-            return try await sigIn(credential: authDataResult)
-        } catch {
-            throw AuthError.unknown(error.localizedDescription)
-        }
+        let authDataResult =  OAuthProvider.appleCredential(
+            withIDToken: appleDataResult.tokenId,
+            rawNonce: appleDataResult.rawNonce,
+            fullName: appleDataResult.fullName
+        )
+        return try await sigIn(credential: authDataResult)
     }
     
     func signOut() throws {
@@ -107,13 +103,15 @@ class FirebaseAuthService: AuthServiceProtocol {
         return AuthDataResultModel(user: dataResult.user)
     }
     
-    func observeAuthState(onChange: @escaping (AuthDataResultModel?) -> Void) {
+    func observeAuthState(onChange: @escaping @MainActor (AuthDataResultModel?) -> Void) {
         if let listener = authListener {
             Auth.auth().removeStateDidChangeListener(listener)
         }
         
         authListener = Auth.auth().addStateDidChangeListener({ _, user in
-            onChange(user.map{ AuthDataResultModel(user: $0) })
+            Task { @MainActor in
+                onChange(user.map{ AuthDataResultModel(user: $0) })
+            }
         })
     }
     

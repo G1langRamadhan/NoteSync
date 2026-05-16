@@ -21,20 +21,20 @@ class FireStoreNoteService: NoteServiceProtocol {
     private var listener: ListenerRegistration?
     
     
-    func fetchNotes(userId: String) async throws -> [NoteModel] {
-        let userNotesRef = userCollections.document(userId).collection("notes")
-        
-        let snapShot = try await userNotesRef
-            .order(by: NoteDocument.CodingKeys.lastUpdateLocal.rawValue, descending: true)
-            .getDocuments()
-        
-        return snapShot.documents.compactMap { document in
-            guard let noteDoc = try? document.data(as: NoteDocument.self) else {
-                return nil
-            }
-            return NoteModel(from: noteDoc)
-        }
-    }
+//    func fetchNotes(userId: String) async throws -> [NoteModel] {
+//        let userNotesRef = userCollections.document(userId).collection("notes")
+//        
+//        let snapShot = try await userNotesRef
+//            .order(by: NoteDocument.CodingKeys.lastUpdateLocal.rawValue, descending: true)
+//            .getDocuments()
+//        
+//        return snapShot.documents.compactMap { document in
+//            guard let noteDoc = try? document.data(as: NoteDocument.self) else {
+//                return nil
+//            }
+//            return NoteModel(from: noteDoc)
+//        }
+//    }
     
     func createNote(_ noteModel: NoteModel, _ userId: String) async throws {
         let data: [String: Any] = [
@@ -64,6 +64,32 @@ class FireStoreNoteService: NoteServiceProtocol {
         ]
         
         try await userCollections.document(userId)
+            .collection("notes")
+            .document(noteModel.id)
+            .updateData(data)
+    }
+    
+    func updateNoteSharedNote(_ noteModel: NoteModel, _ userId: String) async throws {
+        let data: [String: Any] = [
+            NoteDocument.CodingKeys.title.rawValue : noteModel.title,
+            NoteDocument.CodingKeys.body.rawValue : noteModel.body,
+            NoteDocument.CodingKeys.dateCreated.rawValue : noteModel.dateCreated,
+            NoteDocument.CodingKeys.lastUpdateLocal.rawValue : noteModel.lastUpdateLocal,
+            "lastUpdateServer": FieldValue.serverTimestamp()
+        ]
+        
+//        let userNotesRef = try await db.collectionGroup("notes")
+//            .whereField("id", isEqualTo: noteModel.id)
+//            .whereField("sharedWith", arrayContains: userId)
+//            .getDocuments()
+//        
+//        for document in userNotesRef.documents {
+//            return try await document.reference.updateData(data)
+//        }
+            
+        
+        try await userCollections
+            .document(noteModel.ownerId)
             .collection("notes")
             .document(noteModel.id)
             .updateData(data)

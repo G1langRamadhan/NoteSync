@@ -131,7 +131,7 @@ class FireStoreInvitationService: InvitationProtocol {
         invitationId: String,
         userDetail: AuthDataResultModel?
     ) async throws {
-        let hasilTransaksi = try await db.runTransaction { transaction, errorPointer in
+        let _ = try await db.runTransaction { transaction, errorPointer in
             let inviteRef = self.invitationCollection.document(invitationId)
             
             let inviteDoc: DocumentSnapshot
@@ -188,7 +188,7 @@ class FireStoreInvitationService: InvitationProtocol {
         }
     }
     
-    func declineInvitation(ownerId: String, invitationId: String, noteId: String) async throws {
+    func declineInvitation(invitationId: String) async throws {
         let declineStatus: [String: Any] = [
             "status": InvitationStatus.declined.rawValue
         ]

@@ -16,5 +16,5 @@ protocol AuthServiceProtocol {
     func signInWithApple(appleDataResult: AppleDataResult) async throws -> AuthDataResultModel
     
     func signOut() throws
-    func observeAuthState(onChange: @escaping (AuthDataResultModel?) -> Void)
+    func observeAuthState(onChange: @escaping @MainActor (AuthDataResultModel?) -> Void)
 }

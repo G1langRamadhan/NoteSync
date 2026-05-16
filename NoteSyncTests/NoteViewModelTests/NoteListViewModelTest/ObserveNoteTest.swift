@@ -8,7 +8,7 @@
 import XCTest
 @testable import NoteSync
 
-extension NoteViewModelTest {
+extension NoteListViewModelTest {
     func test_noteListViewModel_successfullyObserveNote_observer_shouldBeCalled() {
         // When
         sut = NoteListViewModel(userId: "testoViewModel")

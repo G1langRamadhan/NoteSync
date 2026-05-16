@@ -18,7 +18,7 @@ protocol InvitationProtocol {
         invitationId: String,
         userDetail: AuthDataResultModel?
     ) async throws
-    func declineInvitation(ownerId: String, invitationId: String, noteId: String) async throws
+    func declineInvitation(invitationId: String) async throws
     func observerInvitation(userId: String, onChange: @escaping ([InvitationModel]) -> Void)
     func removeListener()
 }

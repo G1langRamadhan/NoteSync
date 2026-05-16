@@ -19,6 +19,10 @@ struct AppleDataResult {
     var fullName: PersonNameComponents
 }
 
+protocol AppleSigInHelperProtocol {
+    func signInWithApple () async throws -> AppleDataResult
+}
+
 struct signInWithAppleButtonUIrepresentable: UIViewRepresentable {
     let buttonType: ASAuthorizationAppleIDButton.ButtonType
     let buttonStyle: ASAuthorizationAppleIDButton.Style
@@ -38,7 +42,7 @@ extension UIViewController: @retroactive ASAuthorizationControllerPresentationCo
     }
 }
 
-final class AppleSigInHelper: NSObject {
+final class AppleSigInHelper: NSObject, AppleSigInHelperProtocol {
     
     private var currentNonce: String?
     let authService = FirebaseAuthService()

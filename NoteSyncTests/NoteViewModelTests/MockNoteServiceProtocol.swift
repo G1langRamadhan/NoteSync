@@ -40,6 +40,7 @@ class MockNoteServiceProtocol: NoteServiceProtocol {
     
     
     func createNote(_ noteModel: NoteModel, _ userId: String) async throws {
+        try await Task.sleep(for: .milliseconds(100))
         createdNoteCallCount += 1
         lastCreatedNote = noteModel
         lastCreatedUserId = userId
@@ -50,6 +51,7 @@ class MockNoteServiceProtocol: NoteServiceProtocol {
     }
     
     func updateNote(_ noteModel:NoteModel, _ userId: String) async throws {
+        try await Task.sleep(for: .milliseconds(100))
         updatedNoteCallCount += 1
         lastUpdatedNote = noteModel
         lastCreatedUserId = userId

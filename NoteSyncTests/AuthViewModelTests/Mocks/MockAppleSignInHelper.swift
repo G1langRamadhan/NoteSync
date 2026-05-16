@@ -6,3 +6,19 @@
 //
 
 import Foundation
+@testable import NoteSync
+
+class MockAppleSignInHelper: AppleSigInHelperProtocol {
+    
+    var shouldThrowError: Bool = false
+    var helperCallCount: Int = 0
+    
+    func signInWithApple () async throws -> AppleDataResult {
+        helperCallCount += 1
+        if shouldThrowError {
+            throw AuthError.appleSignInFailed
+        }
+        
+        return AppleDataResult(tokenId: "testing id", rawNonce: "nonceRawtesting", fullName: PersonNameComponents())
+    }
+}

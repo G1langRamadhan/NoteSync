@@ -17,13 +17,13 @@ struct AuthButtonComponent: View {
             }
         } label: {
             Text(title)
-                .fontWeight(.bold)
+                .fontWeight(.semibold)
                 .foregroundStyle(Color.black)
                 .frame(height: 55)
                 .frame(maxWidth: .infinity)
                 .background (
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.nsAccentPrimary)
+                    RoundedRectangle(cornerRadius: 30)
+                        .fill(Color.orangePrimary)
                 )
         }
 

@@ -23,7 +23,11 @@ extension UIApplication {
     }
 }
 
-struct GoogleSignInHelper {
+protocol GoogleSignInHelperProtocol {
+    func getGooglDataResult() async throws-> googleDataResult
+}
+
+struct GoogleSignInHelper: GoogleSignInHelperProtocol {
     func getGooglDataResult() async throws-> googleDataResult {
         guard let rootVC = UIApplication.shared.rootViewController else {
             throw AuthError.googleSignInFailed

@@ -9,30 +9,30 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject private var authViewModel: AuthViewModel
-    @State private var email: String = ""
     @State var showRegisterView: Bool = false
-    @FocusState private var focusedField: Field?
     @State var isEmailInvalid: Bool = false
+    @FocusState private var focusedField: Field?
     
     var body: some View {
-        VStack (spacing: 20){
-            Image(systemName: "pencil.and.scribble")
+        VStack (spacing: 25){
+            Image("logo")
                 .resizable()
-                .frame(width: 40, height: 40)
-                .padding(20)
-                .background(
-                    RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.nsAccentPrimary)
-                )
+                .frame(width: 100, height: 100)
             
-            Text("NoteSync")
-                .font(Font.largeTitle)
-                .fontWeight(.bold)
-                .foregroundStyle(Color.nsTextPrimary)
+            VStack(spacing: 10) {
+                Text("Welcome to NoteSync")
+                    .font(Font.title)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.nsTextPrimary)
+                
+                Text("Login to sync your notes")
+            }
+            
             
             VStack(alignment: .leading, spacing: 10) {
                 TextField("Email", text: $authViewModel.email)
                     .textContentType(.emailAddress)
+                    .foregroundStyle(Color.nsTextPrimary)
                     .padding(20)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
@@ -69,36 +69,49 @@ struct LoginView: View {
                             .stroke(Color.nsAccentPrimary, lineWidth: focusedField == .password ? 2 : 0)
                     )
                     .focused($focusedField, equals: .password)
+                
+                
+                Button {
+                    
+                } label: {
+                    Text("Forget Password?")
+                        .foregroundStyle(Color.orangePrimary)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .font(.subheadline)
+                }
+
             }
             .foregroundStyle(Color.nsTextPrimary)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
             
             VStack(spacing: 10) {
-                AuthButtonComponent(title: "SignIn") {
+                AuthButtonComponent(title: "Sign In With Email") {
                     try await authViewModel.loginEmailAccount()
                 }
                 .disabled(authViewModel.email.isEmpty || authViewModel.password.isEmpty)
                 
-                Text("or")
+                DividerORView()
+                    .padding(.vertical, 30)
                 
-                AuthButtonComponent(title: "SignIn With Google") {
+                AuthButtonComponent(title: "Sign In With Google") {
                     try await authViewModel.signInWithGoogle()
                 }
-                AuthButtonComponent(title: "SignIn With Apple") {
+                AuthButtonComponent(title: "Sign In With Apple") {
                     try await authViewModel.sigInWithApple()
                 }
                 
                 HStack() {
                     Text("Dont have an account?")
                     
-                    Button("SingUp Here"){
+                    Button("Sing Up Here"){
                         showRegisterView = true
                     }
                     .underline()
+                    .foregroundStyle(Color.orangePrimary)
                     .buttonStyle(.plain)
                 }
-                .padding(.top, 10)
+                .padding(.top, 20)
             }
         }
         .fullScreenCover(isPresented: $showRegisterView, content: {
@@ -112,6 +125,27 @@ struct LoginView: View {
     func isValidEmail(_ email: String) -> Bool {
         let regex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/
         return email.wholeMatch(of: regex) != nil
+    }
+}
+
+struct DividerORView: View {
+    var body: some View {
+        HStack(spacing: 16) {
+
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 1)
+
+            Text("OR")
+                .font(.system(size: 15, weight: .bold))
+                .foregroundColor(Color.white.opacity(0.8))
+
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 1)
+        }
+        .padding(.horizontal, 24)
+        .background(Color.black)
     }
 }
 

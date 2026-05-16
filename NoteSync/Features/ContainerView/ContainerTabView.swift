@@ -28,7 +28,7 @@ struct ContainerTabView: View {
                         .navigationDestination(for: Route.self) { route in
                             switch route {
                             case .noteEditorView(let noteModel, let userId):
-                                NoteEditorView(note: noteModel, userId: userId)
+                                NoteEditorView(note: noteModel, userId: userId, userInfo: authVieModel.currentUser)
                             case .collaboratorView(let noteModel, let userId):
                                 CollaboratorsView(noteModel: noteModel, userId: userId, userDetail: authVieModel.currentUser)
                             }
@@ -36,12 +36,6 @@ struct ContainerTabView: View {
                 }
                 .environmentObject(router)
             }
-            
-//            Tab("Collaborators", systemImage: "person.3", value: TabSelection.collaboratorsView) {
-//                NavigationStack(path: $collabRouter.path) {
-//                    CollaboratorsView()
-//                }
-//            }
             
             Tab("Profile", systemImage: "person.crop.circle", value: TabSelection.profileView) {
                 NavigationStack(path: $profileRouter.path) {

@@ -44,7 +44,6 @@ class FirestoreCollaboratorService: CollaboratorProtocol {
         let data: [String: Any] = [
             "name": collaborator.name,
             "role": collaborator.role.rawValue
-//            "collaboratorStatus": collaborator.status.displayText
         ]
         
         try await userCollection
@@ -82,11 +81,8 @@ class FirestoreCollaboratorService: CollaboratorProtocol {
                     return
                 }
                 
-                print("🔍 Ditemukan \(snapshot.documents.count) dokumen di sub-collection collaborators.")
-                
                 let collaborators = snapshot.documents.compactMap { doc in
                     guard let collDoc = try? doc.data(as: CollaboratorDocument.self) else {
-                        print("❌ DECODING ERROR di dokumen \(doc.documentID): \(error)")
                         return nil as CollaboratorModel?
                     }
                     

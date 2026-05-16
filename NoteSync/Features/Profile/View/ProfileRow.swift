@@ -10,29 +10,24 @@ import SwiftUI
 enum ProfileTabType: String, CaseIterable, Identifiable {
     case note
     case collaborators
-    case notification
     
     var id: Self { self }
     
     var icon: String {
         switch self {
         case .note:
-            return "pencil.and.list.clipboard"
+            return "person"
         case .collaborators:
             return "person.2"
-        case .notification:
-            return "bell.badge"
         }
     }
     
     var title: String {
         switch self {
         case .note:
-            return "Total Note"
+            return "Edit profile"
         case .collaborators:
             return "Active Collaborators"
-        case .notification:
-            return "Notification"
         }
     }
 }
@@ -42,7 +37,6 @@ struct ProfileRow: View {
     let profileTabType: ProfileTabType
     var value: String?
     var body: some View {
-        
         HStack {
             Image(systemName: profileTabType.icon)
             

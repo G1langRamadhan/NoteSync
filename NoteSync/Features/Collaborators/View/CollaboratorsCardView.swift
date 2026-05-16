@@ -12,25 +12,30 @@ struct CollaboratorsCardView: View {
     var name: String?
     var photoUrl: String?
     var collaboratorRoles: Role
+    var currentStatus: String = "Online"
     var body: some View {
         HStack(spacing: 15) {
             UserAvatarView(photoUrl: photoUrl, displayName: name, size: 52)
             
             VStack(alignment: .leading, spacing: 5) {
                 Text(name ?? "")
+                    .font(.title3)
+                    .fontWeight(.bold)
                     .foregroundStyle(Color.nsTextPrimary)
-                Text("")
+                Text(currentStatus)
+                    .font(.caption)
                     .foregroundStyle(Color.nsTextSecondary)
             }
             
             Spacer()
             
             Text(collaboratorRoles.rawValue.capitalized)
-                .foregroundStyle(Color.nsAccentPrimary)
-                .padding(10)
+                .foregroundStyle(Color.nsTextPrimary)
+                .padding(.vertical, 5)
+                .padding(.horizontal, 8)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.nsCardSurface)
+                        .fill(Color.nsAccentSecondary)
                 )
         }
 
@@ -42,6 +47,6 @@ struct CollaboratorsCardView: View {
 //        statusCollaborators: .offline,
         name: "",
         photoUrl: "",
-        collaboratorRoles: .editor
+        collaboratorRoles: .editor,
     )
 }

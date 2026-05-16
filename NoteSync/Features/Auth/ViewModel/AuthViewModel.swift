@@ -9,36 +9,47 @@ import Foundation
 import Combine
 import SwiftUI
 
+@MainActor
 class AuthViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var fullName: String = ""
     @Published var passwordConfirmation: String = ""
+    @Published var authState: AuthState = .loading
     
     @Published var isLoading = false
     @Published var errorMessage: String?
-    @Published var isAuthenticated = false
     
     @Published var currentUser: AuthDataResultModel?
     private let authServiceProtocol: AuthServiceProtocol
+    private let appleSignInHelperProtocol: AppleSigInHelperProtocol
+    private let googleSignInHelperProtocol: GoogleSignInHelperProtocol
     
-    init(authService: AuthServiceProtocol = FirebaseAuthService()) {
+    init(
+        authService: AuthServiceProtocol = FirebaseAuthService(),
+        googleSignInHelper: GoogleSignInHelperProtocol = GoogleSignInHelper(),
+        appleSignInHelper: AppleSigInHelperProtocol = AppleSigInHelper()
+    ) {
         self.authServiceProtocol = authService
+        self.googleSignInHelperProtocol = googleSignInHelper
+        self.appleSignInHelperProtocol = appleSignInHelper
         observeAuthState()
     }
     
     func observeAuthState() {
-        authServiceProtocol.observeAuthState { user in
-            self.currentUser = user
-            self.isAuthenticated = user != nil
+        authServiceProtocol.observeAuthState { [weak self] user in
+            self?.currentUser = user
+            self?.authState = user != nil ? .authenticated : .unauthenticated
         }
     }
     
-    func logOut() throws {
+    func signOut() throws {
         do {
             try authServiceProtocol.signOut()
+            currentUser = nil
+            authState = .unauthenticated
         } catch {
-            errorMessage = "Can't logOut"
+            errorMessage = "Gagal keluar. Coba lagi."
         }
     }
     
@@ -47,7 +58,7 @@ class AuthViewModel: ObservableObject {
         errorMessage = nil
         do {
             currentUser = try await authServiceProtocol.createUser(email: email, password: password)
-            isAuthenticated = true
+            authState = .authenticated
         } catch let error as AuthError { // Tangkap error hanya jika tipe error tersebut adalah AuthError
             errorMessage = error.errorDescription
         } catch {
@@ -66,7 +77,7 @@ class AuthViewModel: ObservableObject {
         errorMessage = nil
         do {
             currentUser = try await authServiceProtocol.signInWithEmail(email: email, password: password)
-            isAuthenticated = true
+            authState = .authenticated
         } catch let error as AuthError {
             errorMessage = error.errorDescription
         } catch {
@@ -82,9 +93,9 @@ class AuthViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let googleDataResult = try await GoogleSignInHelper().getGooglDataResult()
+            let googleDataResult = try await googleSignInHelperProtocol.getGooglDataResult()
             currentUser = try await authServiceProtocol.signInWithGoogle(googleToken: googleDataResult)
-            isAuthenticated = true
+            authState = .authenticated
         } catch let error as AuthError {
             errorMessage = error.errorDescription
         } catch {
@@ -98,9 +109,9 @@ class AuthViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         do {
-            let appleDataResult = try await AppleSigInHelper().signInWithApple()
+            let appleDataResult = try await appleSignInHelperProtocol.signInWithApple()
             currentUser =  try await authServiceProtocol.signInWithApple(appleDataResult: appleDataResult)
-            isAuthenticated = true
+            authState = .authenticated
         } catch let error as AuthError {
             errorMessage = error.errorDescription
         } catch {
@@ -108,16 +119,6 @@ class AuthViewModel: ObservableObject {
         }
         
         isLoading = false
-    }
-    
-    func signOut() {
-        do {
-            try authServiceProtocol.signOut()
-            currentUser = nil
-            isAuthenticated = false
-        } catch {
-            errorMessage = "Gagal keluar. Coba lagi."
-        }
     }
     
     func textBinding(field: Field) -> Binding<String> {

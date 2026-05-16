@@ -16,8 +16,8 @@ class CollaboratorsViewModel: ObservableObject {
 
     private let collaboratorProtocol: CollaboratorProtocol
     private let invitationProtocol: InvitationProtocol
-    private var noteModel: NoteModel
-    private var userInfo: AuthDataResultModel?
+    var noteModel: NoteModel
+    var userInfo: AuthDataResultModel?
     var userId: String
 
     init(userId: String, note: NoteModel, userInfo: AuthDataResultModel?, collaboratorProtocol: CollaboratorProtocol = FirestoreCollaboratorService(), invitationProtocol: InvitationProtocol = FireStoreInvitationService()) {
@@ -31,30 +31,12 @@ class CollaboratorsViewModel: ObservableObject {
     }
     
     func sentInvitation(to email: String) async throws {
-        let invitationForm = InvitationModel(noteId: noteModel.id, title: noteModel.title, role: .editor, invitationFrom: "satuduatiga@gmail.com", toEmail: email)
+        let invitationForm = InvitationModel(noteId: noteModel.id, title: noteModel.title, role: .editor, invitationFrom: userInfo?.email ?? "", toEmail: email)
         do {
             try await invitationProtocol.sendInvitation(ownerId: userId, to: email, invitationForm)
         } catch {
             print("send invitation error: \(error)")
                throw error
-        }
-    }
-    
-    func acceptInvitation(invitation: InvitationModel) async  {
-        do {
-            try await invitationProtocol.acceptInvitation(invitationId: invitation.id, userDetail: userInfo)
-        } catch {
-            print("accept invitation error: \(error)")
-              
-        }
-    }
-    
-    func declineInvitation(invitation: InvitationModel) async {
-        do {
-            try await invitationProtocol.declineInvitation(ownerId: userId, invitationId: invitation.id, noteId: noteModel.id)
-        } catch {
-            print("decline invitation error: \(error)")
-           
         }
     }
     
@@ -91,5 +73,34 @@ class CollaboratorsViewModel: ObservableObject {
     deinit {
         collaboratorProtocol.removeListener()
         invitationProtocol.removeListener()
+    }
+}
+
+
+class InvitationViewModel: ObservableObject {
+    private var invitationProtocol: InvitationProtocol
+    
+    private var userInfo: AuthDataResultModel?
+    init(userInfo: AuthDataResultModel?, invitationProtocol: InvitationProtocol = FireStoreInvitationService()) {
+        self.invitationProtocol = invitationProtocol
+        self.userInfo = userInfo
+    }
+    
+    func acceptInvitation(invitation: InvitationModel) async  {
+        do {
+            try await invitationProtocol.acceptInvitation(invitationId: invitation.id, userDetail: userInfo)
+        } catch {
+            print("accept invitation error: \(error)")
+              
+        }
+    }
+    
+    func declineInvitation(invitation: InvitationModel) async {
+        do {
+            try await invitationProtocol.declineInvitation(invitationId: invitation.id)
+        } catch {
+            print("decline invitation error: \(error)")
+           
+        }
     }
 }

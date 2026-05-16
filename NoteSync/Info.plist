@@ -7,12 +7,26 @@
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string></string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.googleusercontent.apps.328635331220-hmdb10phnvd1rvrac1mmbhtbpos41ghd</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.example.NoteSync</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>notesync</string>
+			</array>
+		</dict>
 	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
 	<key>GIDClientID</key>
 	<string>328635331220-hmdb10phnvd1rvrac1mmbhtbpos41ghd.apps.googleusercontent.com</string>
 	<key>NSApplicationCrashOnExceptions</key>
