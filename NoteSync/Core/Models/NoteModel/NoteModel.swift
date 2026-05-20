@@ -17,13 +17,24 @@ struct NoteModel: Identifiable, Hashable {
     var sharedWith: [String]
     var ownerId: String = ""
     
-    init(title: String, body: String) {
+    init(title: String, body: String, ownerId: String) {
         self.id = UUID().uuidString
         self.sharedWith = []
         self.title = title
         self.body = body
         self.dateCreated = Date()
         self.lastUpdateLocal = Date()
+        self.ownerId = ownerId
+    }
+    
+    init(title: String, body: String, sharedWith: [String], ownerId: String ) {
+        self.id = UUID().uuidString
+        self.sharedWith = sharedWith
+        self.title = title
+        self.body = body
+        self.dateCreated = Date()
+        self.lastUpdateLocal = Date()
+        self.ownerId = ownerId
     }
     
     init(from document: NoteDocument) {

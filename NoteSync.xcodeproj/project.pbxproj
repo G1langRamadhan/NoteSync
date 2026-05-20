@@ -26,11 +26,19 @@
 			remoteGlobalIDString = A6569E272F614E1C00F2EB06;
 			remoteInfo = NoteSync;
 		};
+		A68FF5F82FBAFBE20023C293 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A6569E202F614E1C00F2EB06 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A6569E272F614E1C00F2EB06;
+			remoteInfo = NoteSync;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		A60A992E2FB5F4D70086DAB6 /* NoteSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoteSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A6569E282F614E1C00F2EB06 /* NoteSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A68FF5F22FBAFBE20023C293 /* NoteSyncUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoteSyncUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -55,6 +63,11 @@
 				A65FA5282F65B0AC00656B7D /* Exceptions for "NoteSync" folder in "NoteSync" target */,
 			);
 			path = NoteSync;
+			sourceTree = "<group>";
+		};
+		A68FF5F32FBAFBE20023C293 /* NoteSyncUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = NoteSyncUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -83,6 +96,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A68FF5EF2FBAFBE20023C293 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -98,6 +118,7 @@
 			children = (
 				A6569E2A2F614E1C00F2EB06 /* NoteSync */,
 				A60A992F2FB5F4D80086DAB6 /* NoteSyncTests */,
+				A68FF5F32FBAFBE20023C293 /* NoteSyncUITests */,
 				A62109C52F6A8F14009400FF /* Frameworks */,
 				A6569E292F614E1C00F2EB06 /* Products */,
 			);
@@ -108,6 +129,7 @@
 			children = (
 				A6569E282F614E1C00F2EB06 /* NoteSync.app */,
 				A60A992E2FB5F4D70086DAB6 /* NoteSyncTests.xctest */,
+				A68FF5F22FBAFBE20023C293 /* NoteSyncUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -170,6 +192,29 @@
 			productReference = A6569E282F614E1C00F2EB06 /* NoteSync.app */;
 			productType = "com.apple.product-type.application";
 		};
+		A68FF5F12FBAFBE20023C293 /* NoteSyncUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A68FF5FC2FBAFBE20023C293 /* Build configuration list for PBXNativeTarget "NoteSyncUITests" */;
+			buildPhases = (
+				A68FF5EE2FBAFBE20023C293 /* Sources */,
+				A68FF5EF2FBAFBE20023C293 /* Frameworks */,
+				A68FF5F02FBAFBE20023C293 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A68FF5F92FBAFBE20023C293 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				A68FF5F32FBAFBE20023C293 /* NoteSyncUITests */,
+			);
+			name = NoteSyncUITests;
+			packageProductDependencies = (
+			);
+			productName = NoteSyncUITests;
+			productReference = A68FF5F22FBAFBE20023C293 /* NoteSyncUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -177,7 +222,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2600;
+				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					A60A992D2FB5F4D70086DAB6 = {
@@ -186,6 +231,10 @@
 					};
 					A6569E272F614E1C00F2EB06 = {
 						CreatedOnToolsVersion = 26.0.1;
+					};
+					A68FF5F12FBAFBE20023C293 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = A6569E272F614E1C00F2EB06;
 					};
 				};
 			};
@@ -209,6 +258,7 @@
 			targets = (
 				A6569E272F614E1C00F2EB06 /* NoteSync */,
 				A60A992D2FB5F4D70086DAB6 /* NoteSyncTests */,
+				A68FF5F12FBAFBE20023C293 /* NoteSyncUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -222,6 +272,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A6569E262F614E1C00F2EB06 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A68FF5F02FBAFBE20023C293 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -272,6 +329,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A68FF5EE2FBAFBE20023C293 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -279,6 +343,11 @@
 			isa = PBXTargetDependency;
 			target = A6569E272F614E1C00F2EB06 /* NoteSync */;
 			targetProxy = A60A99322FB5F4D80086DAB6 /* PBXContainerItemProxy */;
+		};
+		A68FF5F92FBAFBE20023C293 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A6569E272F614E1C00F2EB06 /* NoteSync */;
+			targetProxy = A68FF5F82FBAFBE20023C293 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -519,6 +588,49 @@
 			};
 			name = Release;
 		};
+		A68FF5FA2FBAFBE20023C293 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 4KM5ZDJ52X;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.NoteSyncUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = NoteSync;
+			};
+			name = Debug;
+		};
+		A68FF5FB2FBAFBE20023C293 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4KM5ZDJ52X;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.NoteSyncUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = NoteSync;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -545,6 +657,15 @@
 			buildConfigurations = (
 				A6569E342F614E1E00F2EB06 /* Debug */,
 				A6569E352F614E1E00F2EB06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A68FF5FC2FBAFBE20023C293 /* Build configuration list for PBXNativeTarget "NoteSyncUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A68FF5FA2FBAFBE20023C293 /* Debug */,
+				A68FF5FB2FBAFBE20023C293 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

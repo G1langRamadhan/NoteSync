@@ -11,7 +11,8 @@ import XCTest
 extension NoteListViewModelTest {
     func test_noteListViewModel_successfullyObserveNote_observer_shouldBeCalled() {
         // When
-        sut = NoteListViewModel(userId: "testoViewModel")
+        mockNoteListViewModelTest.observerCallCount = 0
+        sut = NoteListViewModel(userId: "testoViewModel", noteProtocol: mockNoteListViewModelTest)
         
         // Then
         XCTAssertEqual(mockNoteListViewModelTest.observerCallCount, 2)

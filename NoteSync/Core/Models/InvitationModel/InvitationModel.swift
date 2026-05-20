@@ -22,7 +22,7 @@ enum InvitationStatus: String, Codable {
     }
 }
 
-enum Role: String, Codable {
+enum RoleCollaborator: String, Codable {
     case editor
     case viewer
     
@@ -40,7 +40,7 @@ struct InvitationModel: Identifiable {
     var id: String
     var noteId: String
     var title: String
-    var role: Role
+    var role: RoleCollaborator
     var toEmail: String
     var invitationFrom: String
     var toUserId: String = ""
@@ -48,7 +48,7 @@ struct InvitationModel: Identifiable {
     var createdAt: Date = Date()
     var expiresAt: Date = Date().addingTimeInterval(7 * 24 * 60 * 60)
     
-    init(noteId: String, title: String, role: Role, invitationFrom: String, toEmail: String) {
+    init(noteId: String, title: String, role: RoleCollaborator, invitationFrom: String, toEmail: String) {
         self.id = UUID().uuidString
         self.noteId = noteId
         self.title = title

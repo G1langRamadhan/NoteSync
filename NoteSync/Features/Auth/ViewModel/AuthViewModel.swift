@@ -9,7 +9,6 @@ import Foundation
 import Combine
 import SwiftUI
 
-@MainActor
 class AuthViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
@@ -36,13 +35,17 @@ class AuthViewModel: ObservableObject {
         observeAuthState()
     }
     
+    @MainActor
     func observeAuthState() {
         authServiceProtocol.observeAuthState { [weak self] user in
-            self?.currentUser = user
-            self?.authState = user != nil ? .authenticated : .unauthenticated
+            Task { @MainActor in
+                self?.currentUser = user
+                self?.authState = user != nil ? .authenticated : .unauthenticated
+            }
         }
     }
     
+    @MainActor
     func signOut() throws {
         do {
             try authServiceProtocol.signOut()
@@ -53,6 +56,7 @@ class AuthViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func createEmailAccount() async throws {
         isLoading = true
         errorMessage = nil
@@ -72,6 +76,7 @@ class AuthViewModel: ObservableObject {
         passwordConfirmation = ""
     }
     
+    @MainActor
     func loginEmailAccount() async throws {
         isLoading = true
         errorMessage = nil
@@ -89,6 +94,7 @@ class AuthViewModel: ObservableObject {
         password = ""
     }
     
+    @MainActor
     func signInWithGoogle() async throws {
         isLoading = true
         errorMessage = nil
@@ -105,6 +111,7 @@ class AuthViewModel: ObservableObject {
         isLoading = false
     }
     
+    @MainActor
     func sigInWithApple() async throws {
         isLoading = true
         errorMessage = nil

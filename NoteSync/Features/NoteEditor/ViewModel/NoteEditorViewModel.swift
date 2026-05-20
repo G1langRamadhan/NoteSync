@@ -9,14 +9,13 @@ import Foundation
 import Combine
 import SwiftUI
 
-enum SyncState {
-    case synced
-    case syncing
-    case error
-    case offline
-}
-
 class NoteEditorViewModel: ObservableObject {
+    enum SyncState {
+        case synced
+        case syncing
+        case error
+        case offline
+    }
     
     @Published var note: NoteModel
     @Published var syncStatus: SyncState = .synced
@@ -24,6 +23,7 @@ class NoteEditorViewModel: ObservableObject {
     
     var userId: String
     private var isNewNote: Bool
+    private var isSaving = false
     private var cancellables = Set<AnyCancellable>()
     
     private var noteServiceProtocol: NoteServiceProtocol
@@ -34,6 +34,12 @@ class NoteEditorViewModel: ObservableObject {
         self.isNewNote = notes.title.isEmpty
         self.noteServiceProtocol = noteServiceProtocol
         autoSave()
+    }
+    
+    private var hasMeaningfulContent: Bool {
+        let title = note.title.trimmingCharacters(in: .whitespacesAndNewlines)
+        let body = note.body.trimmingCharacters(in: .whitespacesAndNewlines)
+        return !title.isEmpty || !body.isEmpty
     }
 
     var formattedDate: String {
@@ -60,27 +66,47 @@ class NoteEditorViewModel: ObservableObject {
     
     func autoSave() {
         Publishers.CombineLatest($note.map(\.title), $note.map(\.body))
+            .removeDuplicates { lhs, rhs in
+                lhs.0 == rhs.0 && lhs.1 == rhs.1
+            }
             .debounce(for: .milliseconds(500), scheduler: RunLoop.main)
             .dropFirst()
             .sink { [weak self] _, _ in
-                guard let self else {return}
+                guard let self, !self.isSaving else { return }
                 Task { try await self.saveNote() }
             }
             .store(in: &cancellables)
     }
     
     func saveNote() async throws {
+        guard !isSaving else { return }
+        isSaving = true
+        defer { isSaving = false }
+        
+        if isNewNote && !hasMeaningfulContent {
+            syncStatus = .synced
+            return
+        }
+        
+        note.lastUpdateLocal = Date()
         syncStatus = .syncing
         do {
-            if isNewNote {
-                try await noteServiceProtocol.createNote(note, userId)
+            if note.ownerId != userId {
+                try await noteServiceProtocol.updateNoteSharedNote(note)
             } else {
-                try await noteServiceProtocol.updateNote(note, userId)
+                guard isNewNote else {
+                    try await noteServiceProtocol.updateNote(note, userId)
+                    syncStatus = .synced
+                    return
+                }
+                
+                try await noteServiceProtocol.createNote(note, userId)
+                isNewNote = false
             }
             syncStatus = .synced
         } catch {
             syncStatus = .error
-            errorMessage = "Gagal menyimpan. Perubahan tersimpan lokal."
+            errorMessage = error.localizedDescription
         }
     }
 }

@@ -12,7 +12,7 @@ struct CollaboratorDocument: Codable {
     @DocumentID var id: String?
     var photoProfile: String?
     var name: String
-    var role: Role
+    var role: RoleCollaborator
 //    var status: CollaboratorStatus
     
     enum CodingKeys: String, CodingKey {

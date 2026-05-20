@@ -9,89 +9,157 @@ import SwiftUI
 
 struct CollaboratorsView: View {
     @StateObject var collaboratorViewModel: CollaboratorsViewModel
-    @StateObject var invitationViewModel: InvitationViewModel
+    @StateObject var sendInvitationViewModel: SendInvitationViewModel
     @State var email: String = ""
+    @State private var selectedRole: RoleCollaborator = .viewer
+    @State private var selectedCollaborator: CollaboratorModel? = nil
     var noteTitle: String
     
     init(noteModel: NoteModel, userId: String, userDetail: AuthDataResultModel?) {
-        _collaboratorViewModel = StateObject(wrappedValue: CollaboratorsViewModel(userId: userId, note: noteModel, userInfo: userDetail))
-        _invitationViewModel = StateObject(wrappedValue: InvitationViewModel(userInfo: userDetail))
+        _collaboratorViewModel = StateObject(wrappedValue: CollaboratorsViewModel(note: noteModel, userId: userId))
+        _sendInvitationViewModel = StateObject(
+            wrappedValue: SendInvitationViewModel(
+                context: NoteInvitationContext(
+                    noteId: noteModel.id,
+                    noteTitle: noteModel.title,
+                    ownerId: noteModel.ownerId
+                ),
+                currentUser: userDetail
+            )
+        )
         noteTitle = noteModel.title
     }
     @FocusState private var focusedField: Field?
     var body: some View {
-        VStack(spacing: 50) {
-            VStack(alignment: .leading, spacing: 50) {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
                 Text(noteTitle)
-                    .font(.title)
-                    .foregroundStyle(Color.nsTextSecondary)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .foregroundStyle(Color.nsTextPrimary)
                 
-                VStack(alignment: .leading, spacing: 20) {
-                    Text("Invite VIA EMAIL".uppercased())
+                VStack(alignment: .leading, spacing: 12) {
+                    Text("Invite via email".uppercased())
+                        .font(.caption)
                         .foregroundStyle(Color.nsTextSecondary)
                     
-                    TextField("Email", text: $email)
-                        .foregroundStyle(Color.nsTextPrimary)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .padding(20)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(Color.border)
-                                .stroke(Color.nsAccentPrimary, lineWidth: focusedField == .email ? 2 : 0)
-                        )
-                        .focused($focusedField, equals: .email)
-                    
-                    Button {
-                        Task {
-                            do {
-                                try await collaboratorViewModel.sentInvitation(to: email)
+                    HStack(spacing: 10) {
+                        TextField("Email kolaborator", text: $email)
+                            .foregroundStyle(Color.nsTextPrimary)
+                            .textContentType(.emailAddress)
+                            .keyboardType(.emailAddress)
+                            .autocorrectionDisabled()
+                            .textInputAutocapitalization(.never)
+                            .focused($focusedField, equals: .email)
+                        
+                        Menu {
+                            Button {
+                                selectedRole = .viewer
+                            } label: {
+                                Label("Viewer", systemImage: selectedRole == .viewer ? "checkmark" : "")
                             }
+                            
+                            Button {
+                                selectedRole = .editor
+                            } label: {
+                                Label("Editor", systemImage: selectedRole == .editor ? "checkmark" : "")
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Text(selectedRole.displayText)
+                                    .font(.subheadline)
+                                    .fontWeight(.semibold)
+                                Image(systemName: "chevron.down")
+                                    .font(.caption)
+                            }
+                            .foregroundStyle(Color.nsTextPrimary)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.nsCardSurface)
+                            )
                         }
-                    } label: {
-                        Text("send invitation")
+                        
+                        Button {
+                            Task {
+                                do {
+                                    try await sendInvitationViewModel.sendInvitation(to: email, role: selectedRole)
+                                    email = ""
+                                }
+                            }
+                        } label: {
+                            Text("Kirim")
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.black)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .background(Color.nsAccentSecondary)
+                                .clipShape(Capsule())
+                        }
+                        .disabled(
+                            email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                            || sendInvitationViewModel.isSending
+                        )
                     }
-                    
-                }
-            }
-            
-            Section {
-                ForEach(collaboratorViewModel.invitations) { invitation in
-                    InvitationCardView(
-                        invitation: invitation,
-                        onAccept: {
-                            await invitationViewModel.acceptInvitation(invitation: invitation)
-                        },
-                        onDecline: {
-                            await invitationViewModel.declineInvitation(invitation: invitation)
-                        }
+                    .padding(14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.border)
+                            .stroke(Color.nsAccentPrimary, lineWidth: focusedField == .email ? 1.5 : 0)
                     )
-                    .listRowInsets(EdgeInsets(
-                        top: 6, leading: 16,
-                        bottom: 6, trailing: 16
-                    ))
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
                 }
-            } header: {
-                SectionHeaderView(
-                    title: "Undangan Masuk",
-                    count: collaboratorViewModel.invitations.count
-                )
+
+                VStack(alignment: .leading, spacing: 12) {
+                    SectionHeaderView(
+                        title: "Kolaborator Aktif",
+                        count: collaboratorViewModel.collaborators.count
+                    )
+                    
+                    ForEach(collaboratorViewModel.collaborators) { collaborator in
+                        CollaboratorsCardView(
+                            collaboratorId: collaborator.id,
+                            name: collaborator.name,
+                            photoUrl: collaborator.photoProfile,
+                            collaboratorRoles: collaborator.role,
+                        )
+                        .padding(12)
+                        .background(Color.nsCardSurface)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .onTapGesture {
+                                selectedCollaborator = collaborator // ← trigger sheet dari parent
+                            }
+                    }
+                }
             }
-            
-            Spacer()
+        }
+        .sheet(item: $selectedCollaborator) { collaborator in
+            EditCollaboratorSheet(
+                collaborator: collaborator,
+                onSave: { name, role in
+                    var updated = collaborator
+                    updated.name = name
+                    updated.role = role
+                    Task {
+                        try await collaboratorViewModel.updateCollaborator(colloratorModel: updated)
+                    }
+                },
+                onDelete: {
+                    Task {
+                        try await collaboratorViewModel.deleteCollaborator(collaboratorId: collaborator.id)
+                    }
+                }
+            )
+            .presentationDetents([.medium])
         }
         .padding(.horizontal)
+        .padding(.top, 8)
         .navigationTitle("Collaborators")
         .toolbarColorScheme(.dark, for: .navigationBar)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(
             Color.nsBackground
         )
-        
     }
 }
 

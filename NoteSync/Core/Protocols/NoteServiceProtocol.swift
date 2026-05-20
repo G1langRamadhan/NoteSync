@@ -12,6 +12,7 @@ protocol NoteServiceProtocol {
 //    func fetchNotes(userId: String) async throws -> [NoteModel]
     func createNote(_ noteModel: NoteModel, _ userId: String) async throws
     func updateNote(_ noteModel: NoteModel, _ userId: String) async throws
+    func updateNoteSharedNote(_ noteModel: NoteModel/*, _ userId: String*/) async throws
     func deleteNote(noteId: String, userId: String) async throws
     
     func observer(userId: String, onChange: @escaping ([NoteModel]) -> Void)

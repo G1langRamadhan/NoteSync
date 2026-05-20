@@ -21,7 +21,7 @@ extension AuthViewModelTest {
         
         mockService.mockUser = user
         
-        let sut = AuthViewModel(
+        sut = AuthViewModel(
             authService: mockService,
             appleSignInHelper: MockAppleSignInHelper()
         )
@@ -43,7 +43,7 @@ extension AuthViewModelTest {
         let appleSignInHelper = MockAppleSignInHelper()
         appleSignInHelper.shouldThrowError = true
         
-        let sut = AuthViewModel(
+        sut = AuthViewModel(
             authService: mockService,
             appleSignInHelper: appleSignInHelper
         )
@@ -53,7 +53,6 @@ extension AuthViewModelTest {
         
         // then
         XCTAssertEqual(appleSignInHelper.helperCallCount, 1, "Helper call count should be 1")
-        XCTAssertEqual(appleSignInHelper.helperCallCount, 1, accuracy: 0) // accuracy ini lebih ke selesih nya itu masih masuk range atau tidak dari pengurangan exp 1 dan 2
         XCTAssertEqual(sut.errorMessage, "Apple Sign-In gagal")
         XCTAssertNil(sut.currentUser)
         XCTAssertEqual(sut.authState, .unauthenticated)

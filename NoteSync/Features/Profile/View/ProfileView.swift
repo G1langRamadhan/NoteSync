@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ProfileView: View {
     @EnvironmentObject private var authViewModel: AuthViewModel
+    @StateObject var invitationViewModel: InvitationInboxViewModel
     @StateObject var noteListVM: NoteListViewModel
     init(userId: String) {
         _noteListVM = StateObject(wrappedValue: NoteListViewModel(userId: userId))
+        _invitationViewModel = StateObject(wrappedValue: InvitationInboxViewModel(userId: userId, userInfo: nil))
     }
     var body: some View {
         VStack(spacing: 20) {
@@ -34,46 +36,57 @@ struct ProfileView: View {
                 }
                 
                 HStack {
-                    noteCard(value: noteListVM.filterNoteWithSearch.count, title: "Notes Created")
+                    noteCard(value: noteListVM.myNotes.count, title: "Notes Created")
                     
                     Spacer()
                     
-                    noteCard(value: noteListVM.filterNoteWithSearch.count, title: "Notes Shared")
+                    noteCard(value: noteListVM.sharedNotes.count, title: "Notes Shared")
+                }
+            }
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 12) {
+                    SectionHeaderView(
+                        title: "Undangan Masuk",
+                        count: invitationViewModel.invitations.count
+                    )
+                    
+                    ForEach(invitationViewModel.invitations) { invitation in
+                        InvitationCardView(
+                            invitation: invitation,
+                            onAccept: {
+                                await invitationViewModel.acceptInvitation(invitation: invitation)
+                            },
+                            onDecline: {
+                                await invitationViewModel.declineInvitation(invitation: invitation)
+                            }
+                        )
+                    }
+                    
                 }
             }
             
             VStack(spacing: 20) {
                 ForEach(ProfileTabType.allCases) {type in
-                    ProfileRow(profileTabType: type, value: String(noteListVM.notes.count))
-                }
-                
-                Button {
-
-                } label: {
-                    HStack {
-                        Image(systemName: "bell.badge")
-                        Text("Notifications Center")
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                    }
-                }
-                
-                Divider()
-                
-                Button {
-                    try? authViewModel.signOut()
-                } label: {
-                    HStack {
-                        Image(systemName: "door.right.hand.open")
-                        Text("Keluar")
-                            .foregroundStyle(Color.nsError)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                    }
+                    ProfileRow(
+                        profileTabType: type,
+                        editProfileAction: {
+                            print("Edit profile tapped")
+                        },
+                        collaboratorsInfoAction: {
+                            print("Collaborators info tapped")
+                        },
+                        notificationsAction: {
+                            print("Notifications tapped")
+                        },
+                        logoutAction: {
+                            do {
+                                try authViewModel.signOut()
+                            } catch {
+                                print("Sign out failed: \(error.localizedDescription)")
+                            }
+                        }
+                    )
                 }
             }
             .font(.title3)
@@ -89,7 +102,7 @@ struct ProfileView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                   
+                    
                 } label: {
                     Image(systemName: "tray.badge")
                 }
@@ -98,6 +111,9 @@ struct ProfileView: View {
         .padding(.horizontal)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.nsBackground)
+        .onAppear {
+            invitationViewModel.updateUserInfo(authViewModel.currentUser)
+        }
     }
     
     func noteCard(value: Int, title: String) -> some View {

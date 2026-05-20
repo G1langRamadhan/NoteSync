@@ -16,7 +16,7 @@ enum Field: String, CaseIterable {
     case passwordConfirmation = "Password Confirmation"
 }
 
-struct AuthDataResultModel {
+struct AuthDataResultModel: Decodable{
     var id: String
     var email: String?
     var name: String?

@@ -19,31 +19,44 @@ class MockAuthService: AuthServiceProtocol {
     var signedOut: Bool = false
     var observedUser: AuthDataResultModel? = nil
     
+    enum MockError: Error {
+        case missingMockUser
+    }
+    
     func createUser(email: String, password: String) async throws -> AuthDataResultModel {
         try await Task.sleep(for: .milliseconds(100))
         if shouldThrowError { throw mockError }
-        return mockUser!
+        guard let mockUser else {
+            throw MockError.missingMockUser
+        }
+        return mockUser
     }
     
     func signInWithEmail(email: String, password: String) async throws -> AuthDataResultModel {
         if shouldThrowError { throw mockError }
-        let user = mockUser!
-        currentUser = user
-        return currentUser!
+        guard let mockUser else {
+            throw MockError.missingMockUser
+        }
+        currentUser = mockUser
+        return mockUser
     }
     
     func signInWithGoogle(googleToken: googleDataResult) async throws -> AuthDataResultModel {
         if shouldThrowError { throw mockError }
-        let user = mockUser!
-        currentUser = user
-        return currentUser!
+        guard let mockUser else {
+            throw MockError.missingMockUser
+        }
+        currentUser = mockUser
+        return mockUser
     }
     
     func signInWithApple(appleDataResult: AppleDataResult) async throws -> AuthDataResultModel {
         if shouldThrowError { throw mockError }
-        let user = mockUser!
-        currentUser = user
-        return currentUser!
+        guard let mockUser else {
+            throw MockError.missingMockUser
+        }
+        currentUser = mockUser
+        return mockUser
     }
     
     func signOut() throws {

@@ -12,10 +12,10 @@ struct CollaboratorModel: Identifiable {
     var id: String
     var photoProfile: String?
     var name: String
-    var role: Role
+    var role: RoleCollaborator
 //    var status: CollaboratorStatus
     
-    init(photoProfile: String? = nil, name: String, role: Role) {
+    init(photoProfile: String? = nil, name: String, role: RoleCollaborator) {
         self.id = UUID().uuidString
         self.photoProfile = photoProfile
         self.name = name

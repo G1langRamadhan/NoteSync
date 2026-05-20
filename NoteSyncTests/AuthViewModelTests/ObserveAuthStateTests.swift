@@ -22,21 +22,21 @@ extension AuthViewModelTest {
         mockService.observedUser = user
         
         // when
-//        sut = AuthViewModel(authService: mockService)
+        sut = AuthViewModel(authService: mockService)
         
         // Then
-//        XCTAssertEqual(sut.authState, .authenticated)
-//        XCTAssertNotNil(sut.currentUser)
+        XCTAssertEqual(sut.authState, .authenticated)
+        XCTAssertNotNil(sut.currentUser)
     }
     
     func test_authViewModel__whenObserveAuthState_withNoUser_shouldBeUnAuthenticated() {
         // Given
         mockService.observedUser = nil
         
-//        sut = AuthViewModel(authService: mockService)
+        sut = AuthViewModel(authService: mockService)
         
         // Then
-//        XCTAssertEqual(sut.authState, .unauthenticated)
-//        XCTAssertNil(sut.currentUser)
+        XCTAssertEqual(sut.authState, .unauthenticated)
+        XCTAssertNil(sut.currentUser)
     }
 }

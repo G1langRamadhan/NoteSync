@@ -18,7 +18,8 @@ class FireStoreNoteService: NoteServiceProtocol {
         db.collection("users")
     }
     
-    private var listener: ListenerRegistration?
+    private var myNotesListener: ListenerRegistration?
+    private var sharedNotesListener: ListenerRegistration?
     
     
 //    func fetchNotes(userId: String) async throws -> [NoteModel] {
@@ -69,7 +70,7 @@ class FireStoreNoteService: NoteServiceProtocol {
             .updateData(data)
     }
     
-    func updateNoteSharedNote(_ noteModel: NoteModel, _ userId: String) async throws {
+    func updateNoteSharedNote(_ noteModel: NoteModel/*, _ userId: String*/) async throws {
         let data: [String: Any] = [
             NoteDocument.CodingKeys.title.rawValue : noteModel.title,
             NoteDocument.CodingKeys.body.rawValue : noteModel.body,
@@ -103,11 +104,11 @@ class FireStoreNoteService: NoteServiceProtocol {
     }
     
     func observer(userId: String, onChange: @escaping ([NoteModel]) -> Void) {
-        listener?.remove()
+        myNotesListener?.remove()
         
         let userNotesRef = userCollections.document(userId).collection("notes")
         
-       listener = userNotesRef
+       myNotesListener = userNotesRef
             .order(by: NoteDocument.CodingKeys.lastUpdateLocal.rawValue, descending: true)
             .addSnapshotListener{ snapshot, error in
                 guard let snapshot else {
@@ -127,9 +128,10 @@ class FireStoreNoteService: NoteServiceProtocol {
     
     func observeSharedNote(userId: String, onChange: @escaping ([NoteModel]) -> Void) {
         let userNotesRef = db.collectionGroup("notes")
+        sharedNotesListener?.remove()
             
         print("userid observer shared notes: \(userId)")
-        listener = userNotesRef
+        sharedNotesListener = userNotesRef
             .whereField("sharedWith", arrayContains: userId)
             .addSnapshotListener({ snapshot, error in
                 guard let snapshot else {
@@ -149,8 +151,10 @@ class FireStoreNoteService: NoteServiceProtocol {
     }
     
     func removeListener() {
-        listener?.remove()
-        listener = nil
+        myNotesListener?.remove()
+        myNotesListener = nil
+        sharedNotesListener?.remove()
+        sharedNotesListener = nil
     }
     
     deinit {

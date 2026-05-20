@@ -41,6 +41,17 @@
                ReferencedContainer = "container:NoteSync.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "A68FF5F12FBAFBE20023C293"
+               BuildableName = "NoteSyncUITests.xctest"
+               BlueprintName = "NoteSyncUITests"
+               ReferencedContainer = "container:NoteSync.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction

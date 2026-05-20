@@ -10,13 +10,14 @@ import SwiftUI
 import Combine
 
 class NoteListViewModel: ObservableObject {
+
     @Published var searchNote: String = ""
     @Published var isLoading: Bool = false
+    @Published var isInitialLoading: Bool = true
     @Published var notes: [NoteModel] = []
     @Published var errorMessage: String?
-    
-    private var myNotes: [NoteModel] = []
-    private var sharedNotes: [NoteModel] = []
+    @Published var sharedNotes: [NoteModel] = []
+    @Published var myNotes: [NoteModel] = []
     
     var filterNoteWithSearch: [NoteModel] {
         guard !searchNote.isEmpty else {
@@ -29,7 +30,9 @@ class NoteListViewModel: ObservableObject {
     }
 
     private var noteServiceProtocol: NoteServiceProtocol
-    /*private*/ var userId: String
+    var userId: String
+    private var didLoadMyNotes = false
+    private var didLoadSharedNotes = false
     
     init(userId: String, noteProtocol: NoteServiceProtocol = FireStoreNoteService()) {
         self.noteServiceProtocol = noteProtocol
@@ -47,13 +50,17 @@ class NoteListViewModel: ObservableObject {
 
     func observer() {
         noteServiceProtocol.observer(userId: userId) { [weak self] notes in
+            self?.didLoadMyNotes = true
             self?.myNotes = notes
             self?.combineAndSortNotes()
+            self?.updateLoadingState()
         }
         
         noteServiceProtocol.observeSharedNote(userId: userId) { [weak self] notes in
+            self?.didLoadSharedNotes = true
             self?.sharedNotes = notes
             self?.combineAndSortNotes()
+            self?.updateLoadingState()
         }
     }
     
@@ -62,6 +69,10 @@ class NoteListViewModel: ObservableObject {
         
         allNotes.sort { $0.lastUpdateLocal > $1.lastUpdateLocal }
         notes = allNotes
+    }
+    
+    private func updateLoadingState() {
+        isInitialLoading = !(didLoadMyNotes && didLoadSharedNotes)
     }
     
     deinit {

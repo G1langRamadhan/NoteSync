@@ -22,6 +22,12 @@ class MockNoteServiceProtocol: NoteServiceProtocol {
     var lastCreatedUserId: String?
     var lastUpdatedUserId: String?
     
+    // Update Shared note
+    var lasUpdateSharedNote: NoteModel?
+    var lastUpdateSharedId: String?
+    var updateSharedNoteError: Error? = nil
+    var updatedSharedNoteCallCount: Int = 0
+    
     // Delete Note
     var deleteNoteError: Error? = nil
     var deletedNoteCallCount: Int = 0
@@ -54,12 +60,23 @@ class MockNoteServiceProtocol: NoteServiceProtocol {
         try await Task.sleep(for: .milliseconds(100))
         updatedNoteCallCount += 1
         lastUpdatedNote = noteModel
-        lastCreatedUserId = userId
+        lastUpdatedUserId = userId
         
         if let error = updateNoteError {
             throw error
         }
     }
+    
+    func updateNoteSharedNote(_ noteModel: NoteModel) async throws {
+        updatedSharedNoteCallCount += 1
+        lasUpdateSharedNote = noteModel
+        lastUpdateSharedId = noteModel.id
+        
+        if let error = updateSharedNoteError {
+            throw error
+        }
+    }
+    
     
     func deleteNote(noteId: String, userId: String) async throws {
         deletedNoteCallCount += 1

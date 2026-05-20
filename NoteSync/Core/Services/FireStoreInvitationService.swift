@@ -41,7 +41,6 @@ class FireStoreInvitationService: InvitationProtocol {
             .getDocuments()
         
         // Kalau tidak ada hasil → user tidak terdaftar
-        print("user yang dicari: \(email)")
         guard let document = snapShot.documents.first else {
             throw CollaboratorError.userNotFound
         }

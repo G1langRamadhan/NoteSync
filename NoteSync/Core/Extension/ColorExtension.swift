@@ -12,3 +12,4 @@ extension Color {
     static let nsTextPrimary = Color("TextPrimary")
     static let nsTextSecondary = Color("TextSecondary")
 }
+

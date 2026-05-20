@@ -14,9 +14,9 @@ struct NoteEditorView: View {
     @FocusState var isTitleFocused
     @FocusState var isBodyFocused
     @State private var showCollaborators: Bool = false
-    init(note: NoteModel, userId: String, userInfo: AuthDataResultModel?) {
+    init(note: NoteModel, userId: String, userInfo _: AuthDataResultModel?) {
         _noteEditorViewModel = StateObject(wrappedValue: NoteEditorViewModel(notes: note, userId: userId))
-        _collaboratorViewModel = StateObject(wrappedValue: CollaboratorsViewModel(userId: userId, note: note, userInfo: userInfo))
+        _collaboratorViewModel = StateObject(wrappedValue: CollaboratorsViewModel(note: note, userId: userId))
     }
     
     var isEditable: Bool {
@@ -24,22 +24,11 @@ struct NoteEditorView: View {
             return true
         }
         
-        if let collaboratorRole = collaboratorViewModel.collaborators.first(where: {$0.id == noteEditorViewModel.userId}) {
-            print("collaboratorRole: \(collaboratorRole)")
+        if let collaboratorRole = collaboratorViewModel.collaborators.first(where: { $0.id == noteEditorViewModel.userId }) {
             return collaboratorRole.role == .editor
         }
         
-        return (collaboratorViewModel.noteModel.sharedWith.first(where: { $0 == noteEditorViewModel.userId}) != nil)
-    }
-    
-    var ownerInfo: (name: String, avatar: String) {
-        if let ownerInfo = collaboratorViewModel.userInfo,
-           let name = ownerInfo.name,
-           let photoURL = ownerInfo.photoURL {
-            return (name, photoURL)
-        }
-        
-        return ("Pemilik", "")
+        return false
     }
     
     var body: some View {
@@ -56,6 +45,7 @@ struct NoteEditorView: View {
                         isBodyFocused = true
                     }
                     .padding(.horizontal, 20)
+                    .disabled(!isEditable)
                 
                 HStack(spacing: 20) {
                     Text(noteEditorViewModel.formattedDate)
@@ -63,11 +53,9 @@ struct NoteEditorView: View {
                         .foregroundColor(.nsTextSecondary)
                         .padding(.horizontal, 20)
                     
-                    //                    HStack {
                     Circle()
                         .frame(width: 10)
                         .foregroundStyle(noteEditorViewModel.syncStatusColor)
-                    //                    }
                 }
                 .padding(.bottom, 8)
                 
@@ -89,20 +77,10 @@ struct NoteEditorView: View {
                         .focused($isBodyFocused)
                         .frame(minHeight: 400)
                         .padding(.horizontal, 16)
-                    //                        .disabled(!isEditable)
-                    
+                        .disabled(!isEditable)
                 }
             }
             .toolbar(content: {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        router.navigate(to: .collaboratorView(noteModel: noteEditorViewModel.note, userId: noteEditorViewModel.userId))
-                    } label: {
-                        Image(systemName: "person.3")
-                            .font(.system(size: 12))
-                    }
-                }
-                
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showCollaborators = true
@@ -114,33 +92,51 @@ struct NoteEditorView: View {
             })
             .autocorrectionDisabled()
         }
+        .onAppear{
+            Task {
+                try await collaboratorViewModel.fetchOwnerNote()
+            }
+        }
         .sheet(isPresented: $showCollaborators, content: {
-            VStack(alignment: .leading, spacing: 20) {
-                Text("Kolaborator Catatan Ini")
-                    .font(.title3)
-                    .fontWeight(.bold)
-                    .padding(.top, 15)
-                    .foregroundStyle(Color.nsTextPrimary)
-                
-                ScrollView {
-                    VStack(spacing: 10) {
-                        if noteEditorViewModel.note.ownerId == noteEditorViewModel.userId {
-                            CollaboratorsCardView(
-                                name: ownerInfo.name + "(kamu)",
-                                photoUrl: ownerInfo.avatar,
-                                collaboratorRoles: .editor,
-                                currentStatus: "Pemilik · mengedit sekarang"
-                            )
-                        }
-                        ForEach(collaboratorViewModel.collaborators) { collaborator in
-                            CollaboratorsCardView(/*statusCollaborators: collaborator.status,*/ name: collaborator.name, photoUrl: collaborator.photoProfile, collaboratorRoles: collaborator.role)
+            NavigationStack {
+                VStack(alignment: .leading, spacing: 20) {
+                    ScrollView {
+                        VStack(spacing: 10) {
+                            if let ownerNote = collaboratorViewModel.ownerNote {
+                                CollaboratorsCardView(
+                                    name: ownerNote.name,
+                                    photoUrl: ownerNote.photoURL,
+                                    collaboratorRoles: .editor,
+                                    currentStatus: "Pemilik"
+                                )
+                            }
+                            
+                            ForEach(collaboratorViewModel.collaborators) { collaborator in
+                                CollaboratorsCardView(name: collaborator.name, photoUrl: collaborator.photoProfile, collaboratorRoles: collaborator.role)
+                            }
                         }
                     }
                 }
+                .padding()
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showCollaborators = false
+                            router.navigate(to: .collaboratorView(noteModel: noteEditorViewModel.note, userId: noteEditorViewModel.userId))
+                        } label: {
+                            Label("Kelola", systemImage: "slider.horizontal.3")
+                        }
+                    }
+                    
+                    ToolbarItem(placement: .principal) {
+                        Text("List Collaborators")
+                            .foregroundStyle(Color.nsTextPrimary)
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .presentationDragIndicator(.visible)
+                .presentationDetents([.medium])
             }
-            .padding()
-            .presentationDragIndicator(.visible)
-            .presentationDetents([.height(250)])
         })
         .background(Color.nsBackground)
         .onTapGesture {
@@ -158,6 +154,6 @@ struct NoteEditorView: View {
 
 #Preview {
     NavigationStack {
-        NoteEditorView(note: NoteModel(title: "", body: ""), userId: "", userInfo: nil)
+        NoteEditorView(note: NoteModel(title: "", body: "", ownerId: ""), userId: "", userInfo: nil)
     }
 }

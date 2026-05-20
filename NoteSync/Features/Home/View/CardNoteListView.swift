@@ -13,7 +13,7 @@ struct CardNoteListView: View {
     var noteDescription: String
     var tag: [String]
     var searchText: String
-    var lastUpdate: String = "2h"
+    var lastUpdate: Date
     var isPinNote: Bool = false
     let height = UIScreen.main.bounds.height
     var body: some View {
@@ -64,20 +64,22 @@ struct CardNoteListView: View {
                     .foregroundStyle(Color.border)
                     .padding(.top, 10)
                 
-                HStack {
-                    Text("Updated \(lastUpdate) ago")
-                        .font(.subheadline)
-                        .foregroundStyle(Color.text)
-                        .opacity(0.6)
-                    
-                    Spacer()
-                    
-                    Button {
-                        
-                    } label: {
-                        Image(systemName: isPinNote ? "pin.fill" : "pin")
-                            .foregroundStyle(.orangePrimary)
+                TimelineView(.periodic(from: .now, by: 60)) { _ in
+                    HStack {
+                        Text("Updated " + lastUpdate.timeAgo())
                             .font(.subheadline)
+                            .foregroundStyle(Color.text)
+                            .opacity(0.6)
+                        
+                        Spacer()
+                        
+                        Button {
+                            
+                        } label: {
+                            Image(systemName: isPinNote ? "pin.fill" : "pin")
+                                .foregroundStyle(.orangePrimary)
+                                .font(.subheadline)
+                        }
                     }
                 }
             }
@@ -113,6 +115,7 @@ struct CardNoteListView: View {
         title: "🚀 Card Note List",
         noteDescription: "This is a very long description that explains the note in detail aku hgarhegehgb",
         tag: ["#SwiftUI", "#Combine", "#iOS"],
-        searchText: "Swift"
+        searchText: "Swift",
+        lastUpdate: Date()
     )
 }

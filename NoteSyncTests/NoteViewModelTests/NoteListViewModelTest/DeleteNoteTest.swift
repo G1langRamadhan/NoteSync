@@ -19,7 +19,7 @@ extension NoteListViewModelTest {
         
         // then
         XCTAssertNil(mockNoteListViewModelTest.deleteNoteError)
-        XCTAssertEqual(mockNoteListViewModelTest.deletedNoteId, sut.userId)
+        XCTAssertEqual(mockNoteListViewModelTest.deletedNoteId, noteModel.id)
         XCTAssertEqual(mockNoteListViewModelTest.deletedNoteCallCount, 1)
         XCTAssertNil(sut.errorMessage)
     }
@@ -40,7 +40,7 @@ extension NoteListViewModelTest {
         // then
         XCTAssertNotNil(mockNoteListViewModelTest.deleteNoteError)
         XCTAssertEqual(mockNoteListViewModelTest.deletedNoteCallCount, 1)
-        XCTAssertNotEqual(mockNoteListViewModelTest.deletedNoteId, sut.userId)
+        XCTAssertEqual(mockNoteListViewModelTest.deletedNoteId, noteModel.id)
         XCTAssertNotNil(sut.errorMessage)
     }
 }

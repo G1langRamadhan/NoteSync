@@ -8,26 +8,36 @@
 import SwiftUI
 
 enum ProfileTabType: String, CaseIterable, Identifiable {
-    case note
-    case collaborators
+    case editProfile
+    case collaboratorsInfo
+    case notifications
+    case logout
     
     var id: Self { self }
     
     var icon: String {
         switch self {
-        case .note:
+        case .editProfile:
             return "person"
-        case .collaborators:
+        case .collaboratorsInfo:
             return "person.2"
+        case .notifications:
+            return "bell.badge"
+        case .logout:
+            return "door.right.hand.open"
         }
     }
     
     var title: String {
         switch self {
-        case .note:
+        case .editProfile:
             return "Edit profile"
-        case .collaborators:
+        case .collaboratorsInfo:
             return "Active Collaborators"
+        case .notifications:
+            return "Notifications Center"
+        case .logout:
+            return "Logout"
         }
     }
 }
@@ -35,24 +45,23 @@ enum ProfileTabType: String, CaseIterable, Identifiable {
 
 struct ProfileRow: View {
     let profileTabType: ProfileTabType
-    var value: String?
+    var editProfileAction: () -> Void
+    var collaboratorsInfoAction: () -> Void
+    var notificationsAction: () -> Void
+    var logoutAction: () -> Void
     var body: some View {
         HStack {
             Image(systemName: profileTabType.icon)
-            
             Text(profileTabType.title)
-                .foregroundStyle(Color.nsTextPrimary)
             
             Spacer()
             
-            if let value {
-                Text(value)
-            }
+            Image(systemName: "chevron.right")
         }
         Divider()
     }
 }
 
-#Preview {
-    ProfileRow(profileTabType: .collaborators)
-}
+//#Preview {
+//    ProfileRow(profileTabType: .collaboratorsInfo)
+//}

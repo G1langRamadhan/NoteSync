@@ -40,14 +40,24 @@ class FirestoreCollaboratorService: CollaboratorProtocol {
         }
     }
     
-    func updateCollaborators(userId: String, noteId: String, collaborator: CollaboratorModel) async throws {
+    func fetchOwnerNote(ownerId: String) async throws -> AuthDataResultModel {
+        let userRef = try await userCollection.document(ownerId).getDocument()
+        
+        guard let owner = try? userRef.data(as: AuthDataResultModel.self) else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return owner
+    }
+    
+    func updateCollaborators(ownerId: String, noteId: String, collaborator: CollaboratorModel) async throws {
         let data: [String: Any] = [
             "name": collaborator.name,
             "role": collaborator.role.rawValue
         ]
         
         try await userCollection
-            .document(userId)
+            .document(ownerId)
             .collection(notes)
             .document(noteId)
             .collection(collaborators)
@@ -55,9 +65,9 @@ class FirestoreCollaboratorService: CollaboratorProtocol {
             .updateData(data)
     }
     
-    func deleteCollaborators(userId: String, noteId: String, collaboratorId: String) async throws {
+    func deleteCollaborators(ownerId: String, noteId: String, collaboratorId: String) async throws {
         try await userCollection
-            .document(userId)
+            .document(ownerId)
             .collection(notes)
             .document(noteId)
             .collection(collaborators)
@@ -65,11 +75,11 @@ class FirestoreCollaboratorService: CollaboratorProtocol {
             .delete()
     }
     
-    func observeCollaborators(userId: String, noteId: String, onChange: @escaping ([CollaboratorModel]) -> Void) {
+    func observeCollaborators(ownerId: String, noteId: String, onChange: @escaping ([CollaboratorModel]) -> Void) {
         listener?.remove()
         
         let collaboratorsRef = userCollection
-            .document(userId)
+            .document(ownerId)
             .collection(notes)
             .document(noteId)
             .collection(collaborators)

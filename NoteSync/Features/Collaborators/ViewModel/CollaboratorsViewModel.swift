@@ -11,38 +11,32 @@ import Combine
 
 class CollaboratorsViewModel: ObservableObject {
     @Published var collaborators: [CollaboratorModel] = []
-    @Published var invitations: [InvitationModel] = []
     @Published var isLoading: Bool = false
+    @Published var ownerNote: AuthDataResultModel?
 
     private let collaboratorProtocol: CollaboratorProtocol
-    private let invitationProtocol: InvitationProtocol
     var noteModel: NoteModel
-    var userInfo: AuthDataResultModel?
-    var userId: String
+    private var userId: String
 
-    init(userId: String, note: NoteModel, userInfo: AuthDataResultModel?, collaboratorProtocol: CollaboratorProtocol = FirestoreCollaboratorService(), invitationProtocol: InvitationProtocol = FireStoreInvitationService()) {
+    init(note: NoteModel, userId: String, collaboratorProtocol: CollaboratorProtocol = FirestoreCollaboratorService()) {
         self.collaboratorProtocol = collaboratorProtocol
-        self.invitationProtocol = invitationProtocol
-        self.userId = userId
-        self.userInfo = userInfo
         noteModel = note
+        self.userId = userId
         observer()
-        observerInvitation()
     }
     
-    func sentInvitation(to email: String) async throws {
-        let invitationForm = InvitationModel(noteId: noteModel.id, title: noteModel.title, role: .editor, invitationFrom: userInfo?.email ?? "", toEmail: email)
+    func fetchOwnerNote() async throws {
         do {
-            try await invitationProtocol.sendInvitation(ownerId: userId, to: email, invitationForm)
+            ownerNote = try await collaboratorProtocol.fetchOwnerNote(ownerId: noteModel.ownerId)
         } catch {
-            print("send invitation error: \(error)")
-               throw error
+            
         }
     }
     
     func updateCollaborator(colloratorModel: CollaboratorModel) async throws {
         do {
-            try await collaboratorProtocol.updateCollaborators(userId: userId, noteId: noteModel.id, collaborator: colloratorModel)
+            print("collaborators update value: \(colloratorModel)")
+            try await collaboratorProtocol.updateCollaborators(ownerId: noteModel.ownerId, noteId: noteModel.id, collaborator: colloratorModel)
         } catch {
                     
         }
@@ -50,57 +44,21 @@ class CollaboratorsViewModel: ObservableObject {
     
     func deleteCollaborator(collaboratorId: String) async throws {
         do {
-            try await collaboratorProtocol.deleteCollaborators(userId: userId, noteId: noteModel.id, collaboratorId: collaboratorId)
+            try await collaboratorProtocol.deleteCollaborators(ownerId: noteModel.ownerId, noteId: noteModel.id, collaboratorId: collaboratorId)
         } catch {
             
         }
     }
     
     func observer() {
-        collaboratorProtocol.observeCollaborators(userId: userId, noteId: noteModel.id) { [weak self] collaborator in
+        collaboratorProtocol.observeCollaborators(ownerId: noteModel.ownerId, noteId: noteModel.id) { [weak self] collaborator in
             print("collaboratorsss: \(collaborator)")
             self?.collaborators = collaborator
         }
     }
     
-    func observerInvitation() {
-        print("userId obser invitation: \(userId)")
-        invitationProtocol.observerInvitation(userId: userId) { [weak self] invitation in
-            self?.invitations = invitation
-        }
-    }
     
     deinit {
         collaboratorProtocol.removeListener()
-        invitationProtocol.removeListener()
-    }
-}
-
-
-class InvitationViewModel: ObservableObject {
-    private var invitationProtocol: InvitationProtocol
-    
-    private var userInfo: AuthDataResultModel?
-    init(userInfo: AuthDataResultModel?, invitationProtocol: InvitationProtocol = FireStoreInvitationService()) {
-        self.invitationProtocol = invitationProtocol
-        self.userInfo = userInfo
-    }
-    
-    func acceptInvitation(invitation: InvitationModel) async  {
-        do {
-            try await invitationProtocol.acceptInvitation(invitationId: invitation.id, userDetail: userInfo)
-        } catch {
-            print("accept invitation error: \(error)")
-              
-        }
-    }
-    
-    func declineInvitation(invitation: InvitationModel) async {
-        do {
-            try await invitationProtocol.declineInvitation(invitationId: invitation.id)
-        } catch {
-            print("decline invitation error: \(error)")
-           
-        }
     }
 }

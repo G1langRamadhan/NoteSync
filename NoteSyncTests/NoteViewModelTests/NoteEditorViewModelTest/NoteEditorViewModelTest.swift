@@ -26,7 +26,10 @@ final class NoteEditorViewModelTest: XCTestCase {
     }
     
     func makeSUT() -> NoteEditorViewModel {
-        let notemodel = NoteModel(title: "just testing", body: "body just testing")
+        let notemodel = NoteModel(title: "just testing", body: "just for teting body", sharedWith: [
+            "testingUser1234",
+            "anotherUserid"
+        ], ownerId: "ownerId")
         return NoteEditorViewModel(
             notes: notemodel,
             userId: "testingUser1234",
@@ -44,10 +47,12 @@ final class NoteEditorViewModelTest: XCTestCase {
         
         // Then
         XCTAssertEqual(sut.syncStatus, .synced)
-        XCTAssertEqual(sut.userId, sut.note.id)
+        XCTAssertEqual(sut.userId, "testingUser1234")
         XCTAssertEqual(sut.note.title, "just testing")
         XCTAssertNil(sut.errorMessage)
         XCTAssertEqual(mockNoteListViewModelTest.updatedNoteCallCount, 1)
+        XCTAssertEqual(mockNoteListViewModelTest.lastUpdatedUserId, "testingUser1234")
+        XCTAssertEqual(mockNoteListViewModelTest.lastUpdatedNote?.id, sut.note.id)
     }
     
     func test_noteEditorViewModel_updateNoteFailed_saveNote_shouldBeCalled() async throws {
@@ -68,6 +73,24 @@ final class NoteEditorViewModelTest: XCTestCase {
         XCTAssertEqual(sut.syncStatus, .error)
         XCTAssertEqual(sut.syncStatusColor, .red)
         XCTAssertEqual(mockNoteListViewModelTest.updatedNoteCallCount, 1)
+    }
+    
+    func test_noteEditorViewModel_updateSharedNoteSuccesfully_updateSharedNote_shouldBeCalled() async throws {
+        // given
+        sut = makeSUT()
+        
+        // when
+        try await sut.saveNote()
+        
+        // then
+        XCTAssertEqual(sut.syncStatus, .synced)
+        XCTAssertEqual(mockNoteListViewModelTest.lastUpdateSharedId, sut.note.id)
+        XCTAssertEqual(mockNoteListViewModelTest.updatedSharedNoteCallCount, 1)
+        XCTAssert(sut.note.sharedWith.contains(where: { $0 == sut.userId}))
+    }
+    
+    func test_noteEditorViewModel_updateSharedNoteFail_updateSharedNote_shouldBeCalled() async throws {
+        
     }
     
     func test_noteEditorViewModel_saveNewNoteSuccesfully_saveNote_shouldBeCalled() async throws {

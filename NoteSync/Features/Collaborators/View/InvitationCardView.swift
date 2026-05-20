@@ -101,7 +101,7 @@ struct InvitationCardView: View {
 }
 
 struct RoleBadgeView: View {
-    let role: Role
+    let role: RoleCollaborator
     
     private var color: Color {
         switch role {

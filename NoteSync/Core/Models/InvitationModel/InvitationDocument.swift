@@ -13,7 +13,7 @@ struct InvitationDocument: Codable {
     var noteId: String
     var title: String
     var status: InvitationStatus
-    var role: Role
+    var role: RoleCollaborator
     var invitationFrom: String
     var toEmail: String
     var ownerId: String
