@@ -10,6 +10,7 @@ import Combine
 
 class InvitationInboxViewModel: ObservableObject {
     @Published var invitations: [InvitationModel] = []
+    @Published var pendingInvitations: [InvitationModel] = []
     private let invitationProtocol: InvitationProtocol
     
     private var userInfo: AuthDataResultModel?
@@ -20,6 +21,9 @@ class InvitationInboxViewModel: ObservableObject {
         self.userInfo = userInfo
         self.userId = userId
         observerInvitation()
+        Task {
+            await fetchInvitation()
+        }
     }
     
     func updateUserInfo(_ userInfo: AuthDataResultModel?) {
@@ -31,7 +35,17 @@ class InvitationInboxViewModel: ObservableObject {
             try await invitationProtocol.acceptInvitation(invitationId: invitation.id, userDetail: userInfo)
         } catch {
             print("accept invitation error: \(error)")
-              
+        }
+    }
+    
+    func fetchInvitation() async  {
+        print("call fetch invitaion")
+        do {
+            pendingInvitations = try await invitationProtocol.fetchInvitation(userId: userId)
+            print("owner id: \(userId)")
+            print("pending invitations: \(pendingInvitations)")
+        } catch  {
+            print("Error when fetch pending invitation: \(error)")
         }
     }
     

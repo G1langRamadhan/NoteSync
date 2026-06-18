@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 @MainActor
 class NoteListViewModelTest: XCTestCase {

@@ -45,6 +45,7 @@ class FireStoreNoteService: NoteServiceProtocol {
             NoteDocument.CodingKeys.dateCreated.rawValue : noteModel.dateCreated,
             NoteDocument.CodingKeys.lastUpdateLocal.rawValue : noteModel.lastUpdateLocal,
             NoteDocument.CodingKeys.sharedWith.rawValue : [],
+            NoteDocument.CodingKeys.pinned.rawValue : false,
             "lastUpdateServer": FieldValue.serverTimestamp()
         ]
         
@@ -61,6 +62,7 @@ class FireStoreNoteService: NoteServiceProtocol {
             NoteDocument.CodingKeys.body.rawValue : noteModel.body,
             NoteDocument.CodingKeys.dateCreated.rawValue : noteModel.dateCreated,
             NoteDocument.CodingKeys.lastUpdateLocal.rawValue : noteModel.lastUpdateLocal,
+            NoteDocument.CodingKeys.pinned.rawValue: noteModel.pinned,
             "lastUpdateServer": FieldValue.serverTimestamp()
         ]
         

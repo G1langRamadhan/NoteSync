@@ -16,6 +16,7 @@ struct NoteModel: Identifiable, Hashable {
     var dateCreated: Date
     var sharedWith: [String]
     var ownerId: String = ""
+    var pinned: Bool = false
     
     init(title: String, body: String, ownerId: String) {
         self.id = UUID().uuidString
@@ -27,6 +28,7 @@ struct NoteModel: Identifiable, Hashable {
         self.ownerId = ownerId
     }
     
+    // For unit test only
     init(title: String, body: String, sharedWith: [String], ownerId: String ) {
         self.id = UUID().uuidString
         self.sharedWith = sharedWith
@@ -45,5 +47,6 @@ struct NoteModel: Identifiable, Hashable {
         self.lastUpdateLocal = document.lastUpdateLocal.dateValue()
         self.sharedWith = document.sharedWith
         self.ownerId = document.ownerId
+        self.pinned = document.pinned
     }
 }

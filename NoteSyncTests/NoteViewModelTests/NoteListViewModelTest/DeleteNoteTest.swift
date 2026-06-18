@@ -6,12 +6,12 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 extension NoteListViewModelTest {
     func test_noteListViewModel_successDeleteNote_deleteNote_shouldNoError() async throws {
         // Given
-        let noteModel = NoteModel(title: "TestingNoteModel", body: "The purpose only focus on note model")
+        let noteModel = NoteModel(title: "TestingNoteModel", body: "The purpose only focus on note model", ownerId: "mockupOwnerId")
         sut = NoteListViewModel(userId: noteModel.id, noteProtocol: mockNoteListViewModelTest)
         
         // when
@@ -26,7 +26,7 @@ extension NoteListViewModelTest {
     
     func test_noteListViewModel_failDeleteNote_deleteNote_shouldError() async throws {
         // given
-        let noteModel = NoteModel(title: "TestingNoteModel", body: "The purpose only focus on note model")
+        let noteModel = NoteModel(title: "TestingNoteModel", body: "The purpose only focus on note model", ownerId: "mockupOwnerId")
         mockNoteListViewModelTest.deleteNoteError = NSError(
             domain: "TestError",
             code: 500,

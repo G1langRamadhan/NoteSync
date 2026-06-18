@@ -37,7 +37,7 @@
 
 /* Begin PBXFileReference section */
 		A60A992E2FB5F4D70086DAB6 /* NoteSyncTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoteSyncTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A6569E282F614E1C00F2EB06 /* NoteSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A6569E282F614E1C00F2EB06 /* NoteSyncApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteSyncApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A68FF5F22FBAFBE20023C293 /* NoteSyncUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoteSyncUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -127,7 +127,7 @@
 		A6569E292F614E1C00F2EB06 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A6569E282F614E1C00F2EB06 /* NoteSync.app */,
+				A6569E282F614E1C00F2EB06 /* NoteSyncApp.app */,
 				A60A992E2FB5F4D70086DAB6 /* NoteSyncTests.xctest */,
 				A68FF5F22FBAFBE20023C293 /* NoteSyncUITests.xctest */,
 			);
@@ -189,7 +189,7 @@
 				A65130262FB1AD9500B31F3D /* FirebaseCore */,
 			);
 			productName = NoteSync;
-			productReference = A6569E282F614E1C00F2EB06 /* NoteSync.app */;
+			productReference = A6569E282F614E1C00F2EB06 /* NoteSyncApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		A68FF5F12FBAFBE20023C293 /* NoteSyncUITests */ = {
@@ -370,7 +370,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoteSync.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NoteSync";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoteSyncApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NoteSyncApp";
 			};
 			name = Debug;
 		};
@@ -391,7 +391,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoteSync.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NoteSync";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NoteSyncApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NoteSyncApp";
 			};
 			name = Release;
 		};
@@ -532,6 +532,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NoteSync/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Notely;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -543,7 +544,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.NoteSync;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NoteSyncApp;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -566,6 +567,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NoteSync/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Notely;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -577,7 +579,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.example.NoteSync;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = NoteSyncApp;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;

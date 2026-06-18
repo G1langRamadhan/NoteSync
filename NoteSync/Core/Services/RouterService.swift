@@ -14,15 +14,24 @@ enum Route: Hashable {
     case collaboratorView(noteModel: NoteModel, userId: String)
 }
 
+enum RouteProfile: Hashable {
+    case settingsView
+    case activeCollaboratorsView
+    case notificationCenterView
+    case listInvitationView
+}
+
 class Router: ObservableObject {
     @Published var path = NavigationPath()
     
-    func navigate(to route: Route) {
+    func navigate<T: Hashable>(to route: T) {
         path.append(route)
     }
     
     func navigateBack() {
-        path.removeLast()
+        if !path.isEmpty {
+            path.removeLast()
+        }
     }
     
     func navigateToRoot() {

@@ -56,8 +56,14 @@ struct UserAvatarView: View {
     private var initialsView: some View {
         ZStack {
             Circle()
-                .fill(Color.accentYellow)
-
+                .fill(
+                    Color(
+                        red: .random(in: 0...1),
+                        green: .random(in: 0...1),
+                        blue: .random(in: 0...1)
+                    )
+                )
+            
             Text(initials)
                 .font(.system(size: size * 0.38, weight: .bold))
                 .foregroundColor(.black)

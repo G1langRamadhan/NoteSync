@@ -7,7 +7,7 @@
 
 import XCTest
 import SwiftUI
-@testable import NoteSync
+@testable import NoteSyncApp
 
 @MainActor
 final class NoteEditorViewModelTest: XCTestCase {
@@ -26,10 +26,14 @@ final class NoteEditorViewModelTest: XCTestCase {
     }
     
     func makeSUT() -> NoteEditorViewModel {
-        let notemodel = NoteModel(title: "just testing", body: "just for teting body", sharedWith: [
+        let notemodel = NoteModel(
+            title: "just testing", body: "just for teting body",
+            sharedWith: [
             "testingUser1234",
             "anotherUserid"
-        ], ownerId: "ownerId")
+            ],
+            ownerId: "testingUser1234"
+        )
         return NoteEditorViewModel(
             notes: notemodel,
             userId: "testingUser1234",
@@ -68,6 +72,7 @@ final class NoteEditorViewModelTest: XCTestCase {
         // When
         try await sut.saveNote()
         
+        
         // Then
         XCTAssertNotNil(sut.errorMessage)
         XCTAssertEqual(sut.syncStatus, .error)
@@ -77,7 +82,12 @@ final class NoteEditorViewModelTest: XCTestCase {
     
     func test_noteEditorViewModel_updateSharedNoteSuccesfully_updateSharedNote_shouldBeCalled() async throws {
         // given
-        sut = makeSUT()
+        let sharedNote = NoteModel(title: "Shared note with kai", body: "This is a shared note from kai and can be access by kui", sharedWith: ["invitedUser"], ownerId: "otherUserId")
+        sut = NoteEditorViewModel(
+            notes: sharedNote,
+            userId: "invitedUser",
+            noteServiceProtocol: mockNoteListViewModelTest
+        )
         
         // when
         try await sut.saveNote()
@@ -90,17 +100,38 @@ final class NoteEditorViewModelTest: XCTestCase {
     }
     
     func test_noteEditorViewModel_updateSharedNoteFail_updateSharedNote_shouldBeCalled() async throws {
+        // given
+        mockNoteListViewModelTest.updateSharedNoteError = NSError(
+            domain: "test",
+            code: 500,
+            userInfo: nil
+        )
+        let sharedNote = NoteModel(title: "Shared note with kai", body: "This is a shared note from kai and can be access by kui", sharedWith: ["invitedUser"], ownerId: "otherUserId")
+        sut = NoteEditorViewModel(
+            notes: sharedNote,
+            userId: "invitedUser",
+            noteServiceProtocol: mockNoteListViewModelTest
+        )
+        
+        // when
+        try await sut.saveNote()
+        
+        // then
+        XCTAssertEqual(sut.syncStatus, .error)
+        XCTAssertEqual(sut.syncStatusColor, .red)
+        XCTAssertNotNil(sut.errorMessage)
+        XCTAssertEqual(mockNoteListViewModelTest.updatedSharedNoteCallCount, 1)
         
     }
     
     func test_noteEditorViewModel_saveNewNoteSuccesfully_saveNote_shouldBeCalled() async throws {
-        let noteModel = NoteModel(title: "", body: "body just testing")
-        sut = NoteEditorViewModel(notes: noteModel, userId: "testing", noteServiceProtocol: mockNoteListViewModelTest)
+        let noteModel = NoteModel(title: "", body: "body just testing", ownerId: "testingUserId")
+        sut = NoteEditorViewModel(notes: noteModel, userId: "testingUserId", noteServiceProtocol: mockNoteListViewModelTest)
         
         try await sut.saveNote()
         
         XCTAssertEqual(sut.syncStatus, .synced)
-        XCTAssertEqual(sut.userId, "testing")
+        XCTAssertEqual(sut.userId, "testingUserId")
         XCTAssertEqual(sut.syncStatusColor, .green)
         XCTAssertNil(sut.errorMessage)
         XCTAssertEqual(mockNoteListViewModelTest.createdNoteCallCount, 1)
@@ -108,7 +139,12 @@ final class NoteEditorViewModelTest: XCTestCase {
     
     func test_noteEditorViewModel_syncStatusChange_syncStatus_shouldChangeBaseOndSyncStatus() async throws {
         // Given
-        sut = makeSUT()
+        let newNote = NoteModel(title: "", body: "This is new note", sharedWith: [""], ownerId: "userId")
+        sut = NoteEditorViewModel(
+            notes: newNote,
+            userId: "userId",
+            noteServiceProtocol: mockNoteListViewModelTest
+        )
         
         // when
         let task = Task {
@@ -122,8 +158,8 @@ final class NoteEditorViewModelTest: XCTestCase {
         try await task.value
         XCTAssertEqual(sut.syncStatus, .synced)
         XCTAssertEqual(sut.syncStatusColor, .green)
-        XCTAssertEqual(mockNoteListViewModelTest.updatedNoteCallCount, 1)
-        
+        XCTAssertEqual(sut.note.sharedWith, [""])
+        XCTAssertEqual(mockNoteListViewModelTest.createdNoteCallCount, 1)
     }
     
 }

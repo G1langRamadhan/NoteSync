@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 extension AuthViewModelTest {
     func test_authViewModel_whenCreateUserSucceeds_createUser_shouldReturnUserData() async throws {

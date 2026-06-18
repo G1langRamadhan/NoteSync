@@ -10,10 +10,13 @@ import SwiftUI
 
 struct NoteListView: View {
     @EnvironmentObject var router: Router
-    @StateObject private var notificationService = NotificationService()
     @StateObject var noteListVM: NoteListViewModel
     init(userId: String) {
         _noteListVM = StateObject(wrappedValue: NoteListViewModel(userId: userId))
+    }
+    
+    init(viewModel: NoteListViewModel) {
+        _noteListVM = StateObject(wrappedValue: viewModel)
     }
     
     var body: some View {
@@ -29,18 +32,23 @@ struct NoteListView: View {
                 }
             } else if noteListVM.notes.count >= 1 {
                 ScrollView {
-                    LazyVStack(spacing: 15){
-                        ForEach(noteListVM.filterNoteWithSearch) { note in
-                            CardNoteListView(
-                                title: note.title,
-                                noteDescription: note.body,
-                                tag: ["Swift", "Firebase", "Firestore"],
-                                searchText: noteListVM.searchNote,
-                                lastUpdate: note.lastUpdateLocal
+                    LazyVStack(spacing: 15) {
+                        if !noteListVM.sharedNotes.isEmpty {
+                            createNoteSection(
+                                title: "Shared Notes",
+                                icon: "person.2",
+                                notes: noteListVM.sharedNotes,
+                                searchText: noteListVM.searchNote
                             )
-                            .onTapGesture {
-                                router.navigate(to: .noteEditorView(noteModel: note, userId: noteListVM.userId))
-                            }
+                        }
+                        
+                        if !noteListVM.myNotes.isEmpty {
+                            createNoteSection(
+                                title: "My Notes",
+                                icon: "list.clipboard",
+                                notes: noteListVM.myNotes,
+                                searchText: noteListVM.searchNote
+                            )
                         }
                     }
                 }
@@ -53,7 +61,7 @@ struct NoteListView: View {
                     Text("Klik tombol + di bawah \n untuk mulai menulis".capitalized)
                     
                     AuthButtonComponent(title: "Catatan Baru") {
-                        router.navigate(to: .noteEditorView(noteModel: NoteModel(title: "", body: "", ownerId: noteListVM.userId), userId: noteListVM.userId))
+                        router.navigate(to: Route.noteEditorView(noteModel: NoteModel(title: "", body: "", ownerId: noteListVM.userId), userId: noteListVM.userId))
                     }
                 }
                 .padding(.horizontal)
@@ -67,9 +75,46 @@ struct NoteListView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    router.navigate(to: .noteEditorView(noteModel: NoteModel(title: "", body: "", ownerId: noteListVM.userId), userId: noteListVM.userId))
+                    router.navigate(to: Route.noteEditorView(noteModel: NoteModel(title: "", body: "", ownerId: noteListVM.userId), userId: noteListVM.userId))
                 } label: {
                     Image(systemName: "plus")
+                }
+            }
+        }
+    }
+    
+    private func createNoteSection(
+        title: String, icon: String,
+        notes: [NoteModel], searchText: String
+    ) -> some View {
+       return Group {
+            HStack {
+                Image(systemName: icon)
+                    .foregroundStyle(.accentOrange)
+                
+                Text(title)
+                    .foregroundStyle(.white)
+                    .fontWeight(.semibold)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .font(.body)
+            .padding(.horizontal)
+            
+            ForEach(notes) { note in
+                CardNoteListView(
+                    title: note.title,
+                    noteDescription: note.body,
+                    tag: ["Swift", "Firebase", "Firestore"],
+                    searchText: noteListVM.searchNote,
+                    lastUpdate: note.lastUpdateLocal,
+                    pinnedNote: note.pinned
+                ) {
+                    Task {
+                        await noteListVM.updateNote(note: note)
+                    }
+                }
+                .onTapGesture {
+                    router.navigate(to: Route.noteEditorView(noteModel: note, userId: noteListVM.userId))
                 }
             }
         }
@@ -137,9 +182,25 @@ private struct NoteSkeletonCardView: View {
     }
 }
 
-#Preview {
+#Preview("Loading") {
     NavigationStack {
-        NoteListView(userId: "")
+        NoteListView(viewModel: .previewLoading)
+            .environmentObject(Router())
+            .environmentObject(AuthViewModel())
+    }
+}
+
+#Preview("Empty") {
+    NavigationStack {
+        NoteListView(viewModel: .previewEmpty)
+            .environmentObject(Router())
+            .environmentObject(AuthViewModel())
+    }
+}
+
+#Preview("Filled") {
+    NavigationStack {
+        NoteListView(viewModel: .previewFilled)
             .environmentObject(Router())
             .environmentObject(AuthViewModel())
     }

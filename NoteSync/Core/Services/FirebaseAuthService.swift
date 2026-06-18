@@ -9,6 +9,7 @@ import Foundation
 import Firebase
 import FirebaseAuth
 import GoogleSignIn
+import FirebaseMessaging
 
 struct UserDB {
     var id: String
@@ -39,14 +40,16 @@ class FirebaseAuthService: AuthServiceProtocol {
     private var authListener: AuthStateDidChangeListenerHandle?
     
     func createUserDb(_ user: UserDB) async throws {
+        let token = try await Messaging.messaging().token()
         let data: [String: Any] = [
             "id" : user.id,
             "email" : user.email ?? "",
             "photoUrl" : user.photoURL ?? "",
-            "dateCreated" : user.dateCreated
+            "dateCreated" : user.dateCreated,
+            "fcmToken": token
         ]
         print("data yang akan dikirim ke firebase, \(data)")
-        try await userCollection.document(user.id).setData(data)
+        try await userCollection.document(user.id).setData(data, merge: true)
     }
     
     func createUser(email: String, password: String) async throws -> AuthDataResultModel {
@@ -119,14 +122,19 @@ class FirebaseAuthService: AuthServiceProtocol {
         let code = AuthErrorCode(rawValue: error.code)
         switch code {
         case .invalidEmail:
+            print("invalid email")
             return .invalidEmail
         case .wrongPassword:
+            print("wrong password")
             return .wrongPassword
         case .emailAlreadyInUse:
+            print("email already in use")
             return .emailAlreadyInUse
         case .networkError:
+            print("network error")
             return .networkError
         default:
+            print("unknown error \(error.localizedDescription)")
             return .unknown(error.localizedDescription)
         }
     }

@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "A6569E272F614E1C00F2EB06"
-               BuildableName = "NoteSync.app"
+               BuildableName = "NoteSyncApp.app"
                BlueprintName = "NoteSync"
                ReferencedContainer = "container:NoteSync.xcodeproj">
             </BuildableReference>
@@ -69,7 +69,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A6569E272F614E1C00F2EB06"
-            BuildableName = "NoteSync.app"
+            BuildableName = "NoteSyncApp.app"
             BlueprintName = "NoteSync"
             ReferencedContainer = "container:NoteSync.xcodeproj">
          </BuildableReference>
@@ -86,7 +86,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A6569E272F614E1C00F2EB06"
-            BuildableName = "NoteSync.app"
+            BuildableName = "NoteSyncApp.app"
             BlueprintName = "NoteSync"
             ReferencedContainer = "container:NoteSync.xcodeproj">
          </BuildableReference>

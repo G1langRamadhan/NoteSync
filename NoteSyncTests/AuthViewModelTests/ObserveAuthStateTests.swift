@@ -6,10 +6,10 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 extension AuthViewModelTest {
-    func test_authViewModel__whenObserveAuthState_withUser_shouldBeAuthenticated() {
+    func test_authViewModel__whenObserveAuthState_withUser_shouldBeAuthenticated() async {
         // Given
         let user = AuthDataResultModel(
             id: "testingId123",
@@ -23,17 +23,19 @@ extension AuthViewModelTest {
         
         // when
         sut = AuthViewModel(authService: mockService)
+        await Task.yield()
         
         // Then
         XCTAssertEqual(sut.authState, .authenticated)
         XCTAssertNotNil(sut.currentUser)
     }
     
-    func test_authViewModel__whenObserveAuthState_withNoUser_shouldBeUnAuthenticated() {
+    func test_authViewModel__whenObserveAuthState_withNoUser_shouldBeUnAuthenticated() async {
         // Given
         mockService.observedUser = nil
         
         sut = AuthViewModel(authService: mockService)
+        await Task.yield()
         
         // Then
         XCTAssertEqual(sut.authState, .unauthenticated)

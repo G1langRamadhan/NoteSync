@@ -40,7 +40,20 @@ struct ContainerTabView: View {
             Tab("Profile", systemImage: "person.crop.circle", value: TabSelection.profileView) {
                 NavigationStack(path: $profileRouter.path) {
                     ProfileView(userId: authVieModel.currentUser?.id ?? "")
+                        .navigationDestination(for: RouteProfile.self) { route in
+                            switch route {
+                            case .activeCollaboratorsView:
+                                EmptyView()
+                            case .settingsView:
+                                EmptyView()
+                            case .notificationCenterView:
+                                EmptyView()
+                            case .listInvitationView:
+                                EmptyView()
+                            }
+                        }
                 }
+                .environmentObject(profileRouter)
             }
         }
         .tint(Color.nsAccentSecondary)

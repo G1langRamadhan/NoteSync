@@ -20,6 +20,7 @@ struct NoteDocument: Codable {
     // Timestamp → tipe Firestore, bisa handle timezone server
     var dateCreated: Timestamp
     var lastUpdateLocal: Timestamp
+    var pinned: Bool
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -29,5 +30,6 @@ struct NoteDocument: Codable {
         case dateCreated
         case lastUpdateLocal
         case sharedWith
+        case pinned
     }
 }

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-@testable import NoteSync
+@testable import NoteSyncApp
 
 class MockGoogleSignInHelper: GoogleSignInHelperProtocol {
     

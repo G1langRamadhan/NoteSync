@@ -14,7 +14,8 @@ struct CardNoteListView: View {
     var tag: [String]
     var searchText: String
     var lastUpdate: Date
-    var isPinNote: Bool = false
+    var pinnedNote: Bool = false
+    var updatePinnedNote: () -> Void
     let height = UIScreen.main.bounds.height
     var body: some View {
         VStack {
@@ -74,9 +75,9 @@ struct CardNoteListView: View {
                         Spacer()
                         
                         Button {
-                            
+                            updatePinnedNote()
                         } label: {
-                            Image(systemName: isPinNote ? "pin.fill" : "pin")
+                            Image(systemName: pinnedNote ? "pin.fill" : "pin")
                                 .foregroundStyle(.orangePrimary)
                                 .font(.subheadline)
                         }
@@ -117,5 +118,7 @@ struct CardNoteListView: View {
         tag: ["#SwiftUI", "#Combine", "#iOS"],
         searchText: "Swift",
         lastUpdate: Date()
-    )
+    ) {
+        print("Print update note")
+    }
 }

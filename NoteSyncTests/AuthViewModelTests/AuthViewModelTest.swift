@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 // Function Naming Structure: test_[Sturct or Class]_[Conditon]_[Variable or Function]_[Expected Result]
 

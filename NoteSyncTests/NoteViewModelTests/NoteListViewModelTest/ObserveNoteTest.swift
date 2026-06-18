@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 extension NoteListViewModelTest {
     func test_noteListViewModel_successfullyObserveNote_observer_shouldBeCalled() {
@@ -22,22 +22,22 @@ extension NoteListViewModelTest {
     
     func test_noteListViewModel_successfullyCombineAndSortnote_observer_shouldBeCombineAndSort() {
         // Given
-        let myNote = NoteModel(title: "MyNoteTesting", body: "This is a test for my note")
-        let sharedNote = NoteModel(title: "SharedNoteTesting", body: "This is a test for shared note")
+        let myNote = NoteModel(title: "MyNoteTesting", body: "This is a test for my note", ownerId: "mockOwenrId")
+        let sharedNote = NoteModel(title: "SharedNoteTesting", body: "This is a test for shared note", ownerId: "mockOwenrId")
         
         // When
         mockNoteListViewModelTest.observerOnChange?([myNote, sharedNote])
-        
         
         // Then
         XCTAssertEqual(mockNoteListViewModelTest.observerCallCount, 2)
         XCTAssertEqual(sut.filterNoteWithSearch.count, 2)
         XCTAssertEqual(sut.filterNoteWithSearch.first?.id, sharedNote.id)
+        XCTAssertEqual(sut.filterNoteWithSearch.first?.ownerId, sharedNote.ownerId)
     }
     
     func test_noteListViewModel_searchNoteEmpty_observer_shouldReturnAllNotes() {
-        let myNote = NoteModel(title: "MyNoteTesting", body: "This is a test for my note")
-        let sharedNote = NoteModel(title: "SharedNoteTesting", body: "This is a test for shared note")
+        let myNote = NoteModel(title: "MyNoteTesting", body: "This is a test for my note",  ownerId: "mockOwenrId")
+        let sharedNote = NoteModel(title: "SharedNoteTesting", body: "This is a test for shared note",  ownerId: "mockOwenrId")
         
         mockNoteListViewModelTest.observerOnChange?([myNote, sharedNote])
         

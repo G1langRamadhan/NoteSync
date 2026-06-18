@@ -39,7 +39,6 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        let stringToken = deviceToken.map({ String(format: "%02.2hhx", $0) }).joined()
         Messaging.messaging().apnsToken = deviceToken
     }
 }
@@ -58,6 +57,6 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     }
     
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
-        return [.banner, .sound, .badge]
+        return [.banner, .sound]
     }
 }

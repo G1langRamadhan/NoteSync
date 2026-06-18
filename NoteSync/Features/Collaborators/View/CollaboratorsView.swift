@@ -30,20 +30,34 @@ struct CollaboratorsView: View {
         noteTitle = noteModel.title
     }
     @FocusState private var focusedField: Field?
+    var footer: String {
+        if selectedRole == .viewer {
+            return "Viewer hanya dapat melihat"
+        }
+        
+        return "Collaborator dapat mengedit dan melihat"
+    }
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                Text(noteTitle)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .foregroundStyle(Color.nsTextPrimary)
-                
                 VStack(alignment: .leading, spacing: 12) {
-                    Text("Invite via email".uppercased())
-                        .font(.caption)
+                    HStack {
+                        Image(systemName: "envelope.fill")
+                        Text("Invite Collaborator")
+                            .foregroundStyle(Color.white)
+                    }
+                    .font(.headline)
+                    
+                    Text("Tambahkan orang lain untuk kolaborasi di note ini")
+                        .font(.subheadline)
                         .foregroundStyle(Color.nsTextSecondary)
                     
-                    HStack(spacing: 10) {
+                    Divider()
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Email Kolaborator")
+                            .foregroundStyle(.textSecondary)
+                            .font(.footnote)
                         TextField("Email kolaborator", text: $email)
                             .foregroundStyle(Color.nsTextPrimary)
                             .textContentType(.emailAddress)
@@ -51,6 +65,22 @@ struct CollaboratorsView: View {
                             .autocorrectionDisabled()
                             .textInputAutocapitalization(.never)
                             .focused($focusedField, equals: .email)
+                            .padding(.leading, 8)
+                            .padding(14)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.border)
+                                    .stroke(Color.nsAccentPrimary, lineWidth: focusedField == .email ? 1.5 : 0)
+                            )
+                        Text("Pastikan Email Sudah Benar")
+                            .foregroundStyle(.textSecondary)
+                            .font(.footnote)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Peran")
+                            .foregroundStyle(.textSecondary)
+                            .font(.footnote)
                         
                         Menu {
                             Button {
@@ -66,20 +96,26 @@ struct CollaboratorsView: View {
                             }
                         } label: {
                             HStack(spacing: 6) {
+                                Image(systemName: "person")
                                 Text(selectedRole.displayText)
                                     .font(.subheadline)
                                     .fontWeight(.semibold)
+                                Spacer()
                                 Image(systemName: "chevron.down")
                                     .font(.caption)
                             }
+                            .frame(maxWidth: .infinity)
                             .foregroundStyle(Color.nsTextPrimary)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 8)
+                            .padding(16)
                             .background(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color.nsCardSurface)
+                                    .fill(Color.border)
                             )
                         }
+                        
+                        Text(footer)
+                            .font(.footnote)
+                            .foregroundStyle(.textSecondary)
                         
                         Button {
                             Task {
@@ -89,47 +125,118 @@ struct CollaboratorsView: View {
                                 }
                             }
                         } label: {
-                            Text("Kirim")
+                            Text("Kirim Undangan")
                                 .fontWeight(.semibold)
-                                .foregroundStyle(.black)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .background(Color.nsAccentSecondary)
-                                .clipShape(Capsule())
+                                .foregroundStyle(email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                                 || sendInvitationViewModel.isSending ? .textSecondary : .black)
+                                .frame(maxWidth: .infinity)
+                                .padding(14)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 22)
+                                        .fill(email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                              || sendInvitationViewModel.isSending ? Color.border : Color.nsAccentSecondary )
+                                )
+                                .padding(.top, 10)
                         }
                         .disabled(
                             email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                             || sendInvitationViewModel.isSending
                         )
+
                     }
-                    .padding(14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(Color.border)
-                            .stroke(Color.nsAccentPrimary, lineWidth: focusedField == .email ? 1.5 : 0)
-                    )
+                    
+                }
+                .padding(.vertical, 22)
+                .padding(.horizontal, 16)
+                .background {
+                    RoundedRectangle(cornerRadius: 22)
+                        .fill(Color.nsCardSurface.opacity(0.7))
                 }
 
-                VStack(alignment: .leading, spacing: 12) {
-                    SectionHeaderView(
-                        title: "Kolaborator Aktif",
-                        count: collaboratorViewModel.collaborators.count
-                    )
-                    
-                    ForEach(collaboratorViewModel.collaborators) { collaborator in
-                        CollaboratorsCardView(
-                            collaboratorId: collaborator.id,
-                            name: collaborator.name,
-                            photoUrl: collaborator.photoProfile,
-                            collaboratorRoles: collaborator.role,
-                        )
-                        .padding(12)
-                        .background(Color.nsCardSurface)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .onTapGesture {
+//                if !collaboratorViewModel.collaborators.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack {
+                            Image(systemName: "person.2")
+                            Text("Collaborators")
+                            
+                            Spacer()
+                            Text("\(collaboratorViewModel.collaborators.count)")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.textPrimary)
+                        
+                        Divider()
+                        
+                        Text("Kolaborator Terkonfirmasi")
+                            .font(.footnote)
+                            .foregroundStyle(.textSecondary)
+                        ForEach(collaboratorViewModel.collaborators) { collaborator in
+                            CollaboratorsCardView(
+                                collaboratorId: collaborator.id,
+                                name: collaborator.name,
+                                photoUrl: collaborator.photoProfile,
+                                collaboratorRoles: collaborator.role,
+                            )
+                            .padding(12)
+//                            .background(Color.nsCardSurface)
+//                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .onTapGesture {
                                 selectedCollaborator = collaborator // ← trigger sheet dari parent
                             }
+                        }
+                        
+                        Divider()
+                        
+                        Text("Undangan Terkirim (Pending)")
+                            .font(.footnote)
+                            .foregroundStyle(.textSecondary)
+                        
                     }
+                    .padding(.vertical, 22)
+                    .padding(.horizontal, 16)
+                    .background {
+                        RoundedRectangle(cornerRadius: 22)
+                            .fill(Color.nsCardSurface.opacity(0.7))
+                    }
+//                }
+                
+                if let invitation = sendInvitationViewModel.pendingInvitations.first {
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Image(systemName: "person.line.dotted.person")
+                            Text("Pending Invitation")
+                            
+                            Spacer()
+                            Button {
+                                
+                            } label: {
+                                HStack {
+                                    Text("View All")
+                                    Image(systemName: "chevron.right")
+                                }
+                                .font(.callout)
+                                .foregroundStyle(.orangePrimary)
+                            }
+                        }
+                        .font(.headline)
+                        .foregroundColor(.textPrimary)
+                        
+                        InvitationCardView(
+                            invitation: invitation,
+                            onAccept: {
+//                                await invitationViewModel.acceptInvitation(invitation: invitation)
+                            },
+                            onDecline: {
+//                                await invitationViewModel.declineInvitation(invitation: invitation)
+                            }
+                        )
+                        
+                    }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color.cardSurface)
+                    )
                 }
             }
         }
@@ -163,25 +270,9 @@ struct CollaboratorsView: View {
     }
 }
 
-struct SectionHeaderView: View {
-    let title: String
-    let count: Int
-    
-    var body: some View {
-        HStack {
-            Text(title)
-                .font(.system(size: 13))
-                .foregroundColor(.nsTextSecondary)
-            Spacer()
-            Text("\(count)")
-                .font(.system(size: 12))
-                .foregroundColor(.nsTextSecondary)
-        }
+#Preview {
+    let note = NoteModel(title: "gilang", body: "example body text", ownerId: "test user")
+    NavigationStack {
+        CollaboratorsView(noteModel: note, userId: "example", userDetail: nil)
     }
 }
-
-//#Preview {
-//    NavigationStack {
-//        CollaboratorsView(noteTitle: "SwiftUI Roadmap")
-//    }
-//}

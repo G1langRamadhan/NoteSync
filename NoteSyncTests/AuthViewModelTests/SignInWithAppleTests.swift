@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 extension AuthViewModelTest {
     func test_authViewModel_whenSignInWithGoogle_sigInWithApple_shouldReturnUserData() async throws {
@@ -50,6 +50,7 @@ extension AuthViewModelTest {
         
         // when
         try await sut.sigInWithApple()
+        await Task.yield()
         
         // then
         XCTAssertEqual(appleSignInHelper.helperCallCount, 1, "Helper call count should be 1")

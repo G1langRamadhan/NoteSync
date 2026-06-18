@@ -13,7 +13,6 @@ struct NoteEditorView: View {
     @EnvironmentObject var router: Router
     @FocusState var isTitleFocused
     @FocusState var isBodyFocused
-    @State private var showCollaborators: Bool = false
     init(note: NoteModel, userId: String, userInfo _: AuthDataResultModel?) {
         _noteEditorViewModel = StateObject(wrappedValue: NoteEditorViewModel(notes: note, userId: userId))
         _collaboratorViewModel = StateObject(wrappedValue: CollaboratorsViewModel(note: note, userId: userId))
@@ -83,7 +82,10 @@ struct NoteEditorView: View {
             .toolbar(content: {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        showCollaborators = true
+                        router.navigate(to: Route.collaboratorView(
+                            noteModel: noteEditorViewModel.note,
+                            userId: noteEditorViewModel.userId)
+                        )
                     } label: {
                         Image(systemName: "person.3")
                             .font(.system(size: 12))
@@ -97,47 +99,6 @@ struct NoteEditorView: View {
                 try await collaboratorViewModel.fetchOwnerNote()
             }
         }
-        .sheet(isPresented: $showCollaborators, content: {
-            NavigationStack {
-                VStack(alignment: .leading, spacing: 20) {
-                    ScrollView {
-                        VStack(spacing: 10) {
-                            if let ownerNote = collaboratorViewModel.ownerNote {
-                                CollaboratorsCardView(
-                                    name: ownerNote.name,
-                                    photoUrl: ownerNote.photoURL,
-                                    collaboratorRoles: .editor,
-                                    currentStatus: "Pemilik"
-                                )
-                            }
-                            
-                            ForEach(collaboratorViewModel.collaborators) { collaborator in
-                                CollaboratorsCardView(name: collaborator.name, photoUrl: collaborator.photoProfile, collaboratorRoles: collaborator.role)
-                            }
-                        }
-                    }
-                }
-                .padding()
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showCollaborators = false
-                            router.navigate(to: .collaboratorView(noteModel: noteEditorViewModel.note, userId: noteEditorViewModel.userId))
-                        } label: {
-                            Label("Kelola", systemImage: "slider.horizontal.3")
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .principal) {
-                        Text("List Collaborators")
-                            .foregroundStyle(Color.nsTextPrimary)
-                    }
-                }
-                .navigationBarTitleDisplayMode(.inline)
-                .presentationDragIndicator(.visible)
-                .presentationDetents([.medium])
-            }
-        })
         .background(Color.nsBackground)
         .onTapGesture {
             isBodyFocused = true

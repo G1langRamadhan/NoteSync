@@ -6,7 +6,7 @@
 //
 
 import XCTest
-@testable import NoteSync
+@testable import NoteSyncApp
 
 extension NoteListViewModelTest {
     func test_noteListViewModel_deinitSuccess_deinit_shouldCallDeinit() {

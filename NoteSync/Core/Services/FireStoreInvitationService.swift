@@ -111,21 +111,6 @@ class FireStoreInvitationService: InvitationProtocol {
             .setData(data)
     }
     
-    func fetchInvitation(userId: String) async throws -> [InvitationModel] {
-        let snapshot = try await invitationCollection
-            .whereField("toUserId", isEqualTo: userId)
-            .whereField("status", isEqualTo: InvitationStatus.pending.rawValue)
-            .order(by: "createdAt", descending: true)
-            .getDocuments()
-        
-        return snapshot.documents.compactMap { document in
-            guard let document = try? document.data(as: InvitationDocument.self) else {
-                return nil
-            }
-            return InvitationModel(from: document)
-        }
-    }
-    
     func acceptInvitation (
         invitationId: String,
         userDetail: AuthDataResultModel?
@@ -197,6 +182,36 @@ class FireStoreInvitationService: InvitationProtocol {
             .updateData(declineStatus)
     }
     
+//    func fetchInvitation(userId: String) async throws -> [InvitationModel] {
+//        let snapshot = try await invitationCollection
+//            .whereField("toUserId", isEqualTo: userId)
+//            .whereField("status", isEqualTo: InvitationStatus.pending.rawValue)
+//            .order(by: "createdAt", descending: true)
+//            .getDocuments()
+//        
+//        return snapshot.documents.compactMap { document in
+//            guard let document = try? document.data(as: InvitationDocument.self) else {
+//                return nil
+//            }
+//            return InvitationModel(from: document)
+//        }
+//    }
+    
+    func fetchInvitation(userId: String) async throws -> [InvitationModel] {
+        let snapshot = try await invitationCollection
+            .whereField("ownerId", isEqualTo: userId)
+            .whereField("status", isEqualTo: InvitationStatus.pending.rawValue)
+//            .order(by: "createdAt", descending: true)
+            .getDocuments()
+        
+        return snapshot.documents.compactMap { document in
+            guard let document = try? document.data(as: InvitationDocument.self) else {
+                return nil
+            }
+            return InvitationModel(from: document)
+        }
+    }
+    
     func observerInvitation(userId: String, onChange: @escaping ([InvitationModel]) -> Void) {
         listener?.remove()
         let userInvitationRef = invitationCollection
@@ -204,7 +219,6 @@ class FireStoreInvitationService: InvitationProtocol {
             .whereField("status", isEqualTo: InvitationStatus.pending.rawValue)
 //            .order(by: "createdAt", descending: true)
         
-        print("userInvitationRef: \(userInvitationRef)")
         
         listener = userInvitationRef
             .addSnapshotListener({ snapshot, error in

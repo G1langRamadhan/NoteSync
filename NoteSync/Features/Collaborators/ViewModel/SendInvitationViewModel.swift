@@ -16,6 +16,7 @@ struct NoteInvitationContext {
 
 class SendInvitationViewModel: ObservableObject {
     @Published var isSending: Bool = false
+    @Published var pendingInvitations: [InvitationModel] = []
     @Published var errorMessage: String?
     
     private let invitationProtocol: InvitationProtocol
@@ -30,6 +31,9 @@ class SendInvitationViewModel: ObservableObject {
         self.context = context
         self.currentUser = currentUser
         self.invitationProtocol = invitationProtocol
+        Task {
+            await fetchInvitation()
+        }
     }
     
     func sendInvitation(to email: String, role: RoleCollaborator = .viewer) async throws {
@@ -50,6 +54,14 @@ class SendInvitationViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
             throw error
+        }
+    }
+    
+    func fetchInvitation() async  {
+        guard let userId = currentUser?.id else { return }
+        do {
+            pendingInvitations = try await invitationProtocol.fetchInvitation(userId: userId)
+        } catch  {
         }
     }
 }

@@ -35,7 +35,6 @@ class CollaboratorsViewModel: ObservableObject {
     
     func updateCollaborator(colloratorModel: CollaboratorModel) async throws {
         do {
-            print("collaborators update value: \(colloratorModel)")
             try await collaboratorProtocol.updateCollaborators(ownerId: noteModel.ownerId, noteId: noteModel.id, collaborator: colloratorModel)
         } catch {
                     
